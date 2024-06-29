@@ -23,7 +23,7 @@ def index(request):
     following_posts = Post.objects.filter(author__in = following_profiles).order_by('-created_on')
 
     following_posts_lt = Post.objects.filter(author__in = following_profiles, created_on__lt = today).order_by('-created_on')
-    not_following_posts = Post.objects.exclude(public = False, author__in = following_profiles).order_by('-created_on')
+    not_following_posts = Post.objects.exclude(author__in = following_profiles).filter(public = True).order_by('-created_on')
 
     for post in following_posts:
         post.is_liked = post.likes.filter(id=request.user.id).exists()
