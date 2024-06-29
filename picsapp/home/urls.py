@@ -29,5 +29,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('signup/', SignUpView.as_view(), name="signup"),
     path('explore/', views.explore, name="explore"),
+    path('explore/results/', views.search, name="search"),
+    path('explore/results/profile/<int:user_id>/', views.results_profile, name="results_profile"),
    # path('accounts/profile/', views.profile, name='accounts_profile'),
 ]

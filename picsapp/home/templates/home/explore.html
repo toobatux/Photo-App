@@ -4,11 +4,10 @@
 {% block content %}
 
 <div class="row d-flex justify-content-center align-items-center mt-4">
-  <form class="d-flex" role="search" style="width: 27rem;">
-    <input class="form-control me-2" type="search" placeholder="Find your friends" aria-label="Search">
+  <form method="get" action="{% url 'search' %}" class="d-flex" role="search" style="width: 27rem;">
+    <input id="id_query" type="text" name="query" class="form-control me-2" placeholder="Find your friends" aria-label="Search" maxlength="50" required="">
     <button class="btn btn-outline-secondary" type="submit">Search</button>
   </form>
-
 </div>
 
 {% if public_posts %}

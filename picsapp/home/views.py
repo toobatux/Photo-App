@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy, reverse
 from django.views import generic
-from .forms import ProfileForm, CommentForm
+from .forms import ProfileForm, CommentForm, SearchForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView
 from datetime import date
@@ -99,6 +99,27 @@ def delete_comment_explore(request, user_id, post_id, comment_id):
         comment.delete()
     return redirect('post_detail_explore', user_id, post_id)
 
+@login_required(login_url="/login")
+def search(request):
+    query = ''
+    results = []
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = Profile.objects.filter(user__username__icontains = query)
+    else:
+        form = SearchForm()
+
+    context = {
+        'form': form,
+        'query': query,
+        'results': results,
+    }
+
+    return render(request, 'home/results.html', context)
+
+
 @login_required(login_url="/login/")
 def following_list(request, user_id):
     current_user_profile = get_object_or_404(Profile, pk=user_id)
@@ -185,6 +206,22 @@ def profile(request, user_id):
     }
 
     return render(request, "home/profile.html", context)
+
+@login_required(login_url="/login/")
+def results_profile(request, user_id):
+    profile = get_object_or_404(Profile, pk=user_id)
+    post_count = profile.posts.count()
+    profile_posts = Post.objects.filter(author = profile).order_by('-created_on')
+    is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+
+    context = {
+        'profile': profile,
+        'post_count': post_count,
+        'profile_posts': profile_posts,
+        'is_followed': is_followed,
+    }
+
+    return render(request, "home/results_profile.html", context)
 
 @login_required(login_url="/login/")
 def settings(request):

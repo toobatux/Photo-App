@@ -1,0 +1,58 @@
+{% extends 'home/base.html' %} {% block content %}
+
+<div class="container mt-5 mb-4">
+    <div class="row">
+      <div class="col-auto">
+        <a href="{% url 'explore' %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-center align-items-center text-center">
+    {% if query %} 
+      <h2><b>Results for "{{ query }}"</b></h2>
+    {% else %}
+      <h2><b>Results</b></h2>
+    {% endif %}
+    </div>
+</div>
+
+<!-- <form method="get" action="{% url 'search' %}">
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form> -->
+
+<div class="row d-flex justify-content-center align-items-center mt-4">
+    <form method="get" action="{% url 'search' %}" class="d-flex" role="search" style="width: 27rem;">
+      <input id="id_query" type="text" name="query" class="form-control me-2" placeholder="Find your friends" aria-label="Search" maxlength="50" required="">
+      <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </form>
+</div>
+
+{% if query %}
+<div class="container pt-4" style="width: 27rem;">
+    {% for profile in results %}
+    <div class="row d-flex align-items-center mt-4">
+        <div class="col-auto">
+            <a href="{% url 'results_profile' profile.pk %}">
+            <img class="rounded-circle" 
+            style="height: 50px; width: 50px; object-fit: cover;"
+            src="{{ profile.profile_picture.url }}"
+            alt="Profile Picture"
+            />
+            </a>
+        </div>
+        <div class="col-8">
+            <div>
+                <b>{{ profile.user.username }}</b>
+                <p class="mb-0"><a href="{% url 'results_profile' profile.pk %}" style="color:lightgray;">@{{ profile.user.username|lower }}</a></p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="row pt-5">
+        <h3 class="text-center"><b>No users found</b></h3>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
