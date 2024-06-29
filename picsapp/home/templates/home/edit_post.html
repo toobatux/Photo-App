@@ -1,0 +1,57 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+
+{% if post.author == user.profile %}
+<div class="container mt-5 mb-5">
+  <div class="row d-flex align-items-center">
+      <a href="{% url 'post_detail' user.profile.pk post.pk %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
+  </div>
+</div>
+
+<div class="container d-flex justify-content-center" style="margin-top: 50px;">
+  <div class="card post-background" style="width: 35rem; border-radius: 25px;">
+      <div class="card-header text-center">
+          <h2 class="pt-2 pb-1"><b>Edit Post</b></h2>
+      </div>
+      <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+      <div class="card-body">
+          <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+            <div class="row w-100">
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %} 
+                <div class="row mb-3">
+                  <label for="id_caption" class="form-label">Caption</label>
+                  <input id="id_caption" class="form-control" type="text" name="caption" rows="1">
+                </div>
+                <div class="row mt-5">
+                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+            <div class="row w-100">
+              <form action="{% url 'delete_post' user.profile.pk post.pk %}" method="post">
+                {% csrf_token %}
+                <div class="row mt-3 mb-4">
+                  <button type="submit" class="btn btn-outline-danger w-100">Delete Post</button></a>
+                </div>
+                <div class="row mt-3 mb-4">
+                  <a href="{% url 'post_detail' user.profile.pk post.pk %}" class="ps-0 pe-0"><button type="button" class="btn btn-secondary w-100">Cancel</button></a>
+                </div>
+              </form>
+            </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% else %}
+<div class="row h-100 d-flex justify-content-center align-items-center text-center" style="margin-top: 300px;">
+    <h1><b>Access Denied</b></h1>
+    <a href="{% url 'index' %}" style="color: white;">Return to My Feed</a>
+</div>
+{% endif %}
+
+
+{% endblock %}

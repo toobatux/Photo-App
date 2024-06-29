@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>goyangi</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'home/styles.css' %}">
+        <link rel="shortcut icon" type="image/png" href="{% static 'home/favicon.png' %}" >
+        {% load bootstrap5 %}
+        {% bootstrap_css %} 
+        {% bootstrap_javascript %} 
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+      </head>
+    <body class="body-background" style="color: lightgray;">
+        {% include 'home/navbar.html' %}
+
+        <div style="min-height: 100vh;">
+            <div class="row mb-3"></div>
+            <div class="container">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>  
+
+        <div className="container ps-0 pe-0">
+          <svg viewBox="0 45 310 50" width="100%">
+            <rect x="0" y="0" width="500" height="80" class="svg-body-background"/>
+            <path fill="var()" />
+            <path
+              d="M0 47v75h375v-14.99c-78.339-72.46-180.105-42.829-231.209-35.956C98.397 77.159 41 80.764 0 47"
+              class="svg-background"
+              
+            />
+              <g clip-path="url(#a)" fill="var(--color-secondary)">
+                <path d="" />
+              </g>
+              <defs>
+                <clipPath id="a">
+                  <path fill="#1e2a2f" d="" />
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <!-- <footer class="footer fixed-bottom mt-auto py-3 pb-5" style="background-color: #141c1f;">
+            <div className="container">
+              <div className="row">
+                <div class="container pt-0 mb-4">
+                  © My Site Inc. All Rights Reserved.
+                </div>
+              </div>
+            </div>
+          </footer> -->
+          {% if user.is_authenticated %}
+          <footer class="footer fixed-bottom d-flex justify-content-center align-items-center py-3 nav-background">
+              <div className="row d-flex justify-content-center align-items-center">
+                  <a href="{% url 'create_post' %}" class="btn btn-secondary" style="width: 200px;"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a>
+              </div>
+          </footer>
+          {% else %}
+          <footer class="footer nav-background mt-auto py-3 pb-5">
+            <div className="container">
+              <div className="row">
+                <div class="container pt-0 mb-4">
+                  © My Site Inc. All Rights Reserved.
+                </div>
+              </div>
+            </div>
+          </footer>
+          {% endif %}    
+    </body>
+    <!-- <script>
+      document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+      });
+    </script> -->
+</html>

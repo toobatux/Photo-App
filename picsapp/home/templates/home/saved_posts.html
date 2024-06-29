@@ -1,0 +1,42 @@
+{% extends 'home/base.html' %}
+{% block content %}
+
+<div class="container mt-5 mb-4">
+  <div class="row">
+    <div class="col-auto">
+      <a href="{% url 'settings' %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
+    </div>
+  </div>
+  <div class="row d-flex justify-content-center align-items-center text-center"> 
+    <h2><b>Saved Posts</b></h2>
+  </div>
+</div>
+
+{% if saved_posts %}
+<div class="row">
+    {% for post in saved_posts %}
+    <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center">
+        <a href="{% url 'post_detail' post.author.pk post.pk %}">
+          <div class="post-card">
+            <img class="img-fluid shadow-lg explore-post" 
+              src="{{ post.image.url }}"
+              alt="Post Image"
+              style="border-radius: 25px; object-fit: cover;"
+            />
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="container d-flex justify-content-center align-items-center" style="margin-top: 200px;">
+    <div class="row">
+      <div class="col text-center">
+        <i class="fa-solid fa-camera fa-2xl mb-4" style="color: gray;"></i>
+        <h3><b style="color: gray;">No Posts</b></h3>
+      </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

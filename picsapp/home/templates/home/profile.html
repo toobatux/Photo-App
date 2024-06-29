@@ -1,0 +1,126 @@
+{% extends 'home/base.html' %} {% block content %}
+
+<div class="container ps-0 pe-0">
+  <div class="row profile-top">
+      <div class="col-auto d-flex justify-content-center align-items-center">
+        {% if profile.profile_picture %}
+        <img
+          class="rounded-circle"
+          style="height: 120px; width: 120px;  object-fit: cover;"
+          src="{{ profile.profile_picture.url }}"
+          alt="Profile Picture"
+        />
+        {% endif %}
+      </div>
+    <div class="col d-flex align-items-center me-1 ps-0">
+      <div class="container pe-0">
+        <h1 class="w-100 mt-2">{{ profile.user.username }}</h1>
+        {% if profile.bio %}
+        <p class="text-wrap" style="white-space: normal; word-wrap: break-word; max-width: 210px;">{{ profile.bio }}</p>
+        {% endif %}
+        {% if profile.user == user %}
+        <div class="row">
+          <div class="col-auto pt-1 pe-0 mb-1">
+            <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary" style="width: 7rem;"><b>Edit Profile</b></a>
+          </div>
+          <div class="col-auto pt-1 pe-0 me-0">
+            <a href="{% url 'settings' %}" class="btn btn-outline-secondary" style="width: 3rem;"><i class="fa-solid fa-gear"></i></a>  
+            <!-- <br/> -->
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container ps-0 pe-0 mb-5">
+<hr/>
+
+<div class="row d-flex justify-content-center align-items-center text-center">
+  <div class="col-auto me-5">
+    <div><h4>{{ post_count }}</h4></div>
+    {% if post_count == 1 %}
+    <div><p style="color:white; margin:0px; padding:0px;">Post</p></div>
+    {% else %}
+    <div><p style="color:white; margin:0px; padding:0px;">Posts</p></div>
+    {% endif %}
+  </div>
+  <div class="col-auto">
+    <a href="{% url 'follower_list' profile.pk %}" style="color:white; text-decoration: none;">
+      <div class="d-flex flex-column align-items-center">
+        <div><h4>{{ profile.followers_count }}</h4></div>
+        <div><p style="margin:0px; padding:0px;">Followers</p></div>
+      </div>
+    </a>
+  </div>
+  <div class="col-auto">
+    <a href="{% url 'following_list' profile.pk %}" style="color:white; text-decoration: none;">
+      <div class="d-flex flex-column align-items-center">
+        <div><h4>{{ profile.following_count }}</h4></div>
+        <div><p style="margin:0px; padding:0px;">Following</p></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<hr/>
+</div>
+
+{% if profile.user == user %}
+<div class="row mb-5 mt-4 ps-3 pe-3">
+  <a href="{% url 'create_post' %}" class="btn btn-secondary"><b style="font-size: 20px;">New Post</b></a>
+  <!-- <a href="{% url 'create_post' %}" class="btn btn-secondary"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a> -->
+</div>
+{% else %}
+  <form action="{% url 'follow_user' profile.pk %}" method="POST">
+    {% csrf_token %}
+    {% if is_followed %}
+    <div class="row mb-5 mt-4 ps-3 pe-3">
+      <button type="submit" class="btn btn-secondary"><b style="font-size: 20px;">Unfollow</b></button>
+    </div>
+    {% else %}
+    <div class="row mb-5 mt-4 ps-3 pe-3">
+      <button type="submit" class="btn btn-primary"><b style="font-size: 20px;">Follow</b></button>
+    </div>
+    {% endif %}
+  </form>
+{% endif %}
+
+<div class="row">
+  {% if profile_posts %}
+    {% for post in profile_posts %}
+      <!-- <div class="col-md-4 mb-5 d-flex align-items-center justify-content-center">
+      <a href="{% url 'post_detail' post.author.pk post.pk %}">
+          <img class="img-fluid shadow-lg" 
+          style="height: 375px; width: 375px;  object-fit: cover; border-radius: 25px;"
+          src="{{ post.image.url }}"
+          alt="Post Image"
+          />
+      </a>
+      </div> -->
+      <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center">
+        <a href="{% url 'post_detail' post.author.pk post.pk %}">
+          <div class="post-card">
+            <img class="img-fluid shadow-lg explore-post" 
+              src="{{ post.image.url }}"
+              alt="Post Image"
+              style="border-radius: 25px; object-fit: cover;"
+            />
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  {% else %}
+  <div class="container d-flex justify-content-center align-items-center" style="margin-top: 30px;">
+    <div class="row">
+      <div class="col text-center">
+        <i class="fa-solid fa-camera fa-2xl mb-4" style="color: gray;"></i>
+        <h3><b style="color: gray;">No Posts</b></h3>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

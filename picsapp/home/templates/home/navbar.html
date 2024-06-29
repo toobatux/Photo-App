@@ -1,0 +1,36 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top nav-background">
+  <div class="container pt-2 pb-2">
+    <a class="navbar-brand" href="{% url 'index' %}">
+      <i class="fa-solid fa-cat" style="color: white;"></i>
+      <b class="michroma-regular">goyangi</b></a>      
+    <ul class="navbar-nav me-auto">
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link michroma-regular" aria-current="page" href="{% url 'explore' %}">explore</a>
+      </li>
+      {% endif %}
+    </ul>
+    <ul class="navbar-nav d-flex flex-row">
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+          <a class="nav-link active pt-0 pb-0" aria-current="page" href="{% url 'profile' user.profile.pk %}">
+              <img
+                  class="rounded-circle"
+                  style="height: 40px; width: 40px; object-fit: cover;"
+                  src="{{ user.profile.profile_picture.url }}"
+                  alt="Profile Picture"
+              />
+          </a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+          <a class="nav-link active me-1 btn pt-0 pb-0" aria-current="page" href="{% url 'login' %}"><button class="btn btn-primary mt-0 mb-0 michroma-regular">Login</button></a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link active pt-0 pb-0" aria-current="page" href="{% url 'signup' %}"><button class="btn btn-outline-secondary mt-0 mb-0 michroma-regular">Sign Up</button></a>
+      </li>
+      {% endif %}
+  </ul>
+  </div>
+</nav>

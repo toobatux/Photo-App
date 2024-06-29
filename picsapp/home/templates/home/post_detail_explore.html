@@ -1,0 +1,121 @@
+{% extends 'home/base.html' %}
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <div class="col-auto">
+      <a href="{% url 'explore' %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
+    </div>
+  </div>
+</div>
+
+<div class="container d-flex justify-content-center align-items-center">
+  <div class="row">
+    <div class="col-12 col-md-auto">
+      <div class="card post-background ps-0 pe-0" style="max-width: 40rem">
+        <div class="card-header pt-2 pb-2">
+          <div class="row d-flex align-items-center">
+            <div class="col-1">
+              <img class="rounded-circle" style="height: 40px; width: 40px; object-fit: cover;" src="{{ post.author.profile_picture.url }}" alt="Author Profile Picture"/>
+            </div>
+            <div class="col ms-3">
+              <a href="{% url 'profile' post.author.pk %}" style="color: white; text-decoration: none;"><b>{{ post.author }}</b></a>
+            </div>
+            {% if post.author == user.profile %}
+            <div class="col-auto">
+              <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary"><b>Edit Post</b></a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" style="max-height: 600px; min-width: 400px; object-fit: contain; background-color: black;">
+        <div class="card-body">
+          <div class="row d-flex align-items-center">
+            <div class="col-auto ps-0 ms-2">
+              <form action="{% url 'like_post' post.author.pk post.pk %}" method="POST">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                {% if liked %}
+                <button type="submit" name="post_id" value="{{ post.id }}" style="background: none; border: none;"><i class="fa-solid fa-heart fa-xl" style="color: red;"></i></button>
+                {% else %}
+                <button type="submit" name="post_id" value="{{ post.id }}" style="background: none; border: none;"><i class="fa-regular fa-heart fa-xl" style="color: white;"></i></button>
+                {% endif %}
+                {% endif %}
+              </form>
+            </div>
+            <div class="col ps-0">
+              {% if total_likes == 1 %}
+              <p class="mb-0" id="{{ post.id }}"><b>{{ total_likes }} like</b></p>
+              {% else %}
+              <p class="mb-0" id="{{ post.id }}"><b>{{ total_likes }} likes</b></p>
+              {% endif %}
+            </div>
+            <div class="col ps-0">
+              <p class="card-text d-flex float-end" style="color: lightgray;">{{ post.created_on|date:"F j, Y" }}</p>
+            </div>
+          </div>
+          <!-- <div class="row">
+            {% if post.caption %}
+            <p class="card-text mt-3"><b>{{ post.author }}</b> {{ post.caption }}</p>
+            {% endif %}
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <!--COMMENT TAB-->
+    <div class="col-12 col-md-auto mt-3 mt-md-0">
+      <div class="card post-background ps-0 pe-0 h-100" style="min-width: 25rem;">
+        <div class="col h-100" style="max-height: 600px; overflow-y: auto">
+          {% if post.caption %}
+          <div class="row mt-3 ms-3 me-3 d-flex">
+            <div class="col-auto ps-0">
+              <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" src="{{ post.author.profile_picture.url }}" alt="Author Profile Picture"/>
+            </div>
+            <div class="col ps-0 pe-0" style="max-width: 300px;">
+              <a href="{% url 'profile' post.author.pk %}" style="color: white; text-decoration: none;"><b>{{ post.author }}</b></a>
+              <p>{{ post.caption }}</p>
+            </div>
+            <hr/>
+          </div>
+          {% endif %}
+          {% for comment in comments %}
+          <div class="row ms-3 me-3 mb-3 mt-3 d-flex" style="height: 60px">
+            <div class="col-auto ps-0">
+              <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" src="{{ comment.author.profile.profile_picture.url }}" alt="Comment Author Profile Picture"/>
+            </div>
+            <div class="col ps-0 pe-0" style="max-width: 300px;">
+              <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><b>{{ comment.author.username }}</b></a>
+              <p>{{ comment.text }}</p>
+            </div>
+            {% if user == comment.author or user == post.author.user %}
+            <div class="col-auto">
+              <form action="{% url 'delete_comment_explore' post.author.pk post.pk comment.pk %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm mt-2"><i class="fa-solid fa-trash" style="color:white;"></i></button>
+            </form>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        <div class="row ms-1 me-1 mt-4">
+          <form method="post">
+            {% csrf_token %}
+            <div class="row mb-3">
+              <div class="col-9 ps-2 pe-0">
+                <input id="id_text" class="form-control" type="text" name="text" rows="1" placeholder="Leave a Comment" required="">
+              </div>
+              <div class="col-3 ps-0 pe-2">
+                <button class="btn btn-outline-secondary w-100" type="submit">Send</button>
+              </div>
+            </div>
+          </form>
+          <!-- <input type="text" class="form-control" placeholder="Leave a comment" aria-label="Comment" aria-describedby="button-addon2"/> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
