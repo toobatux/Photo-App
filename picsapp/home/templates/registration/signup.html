@@ -1,37 +1,47 @@
 {% extends 'home/base.html' %} {% block content %}
 
     <div class="container d-flex justify-content-center mb-4" style="margin-top: 175px;">
-        <div class="card post-background" style="width: 35rem; border-radius: 25px;">
-            <div class="card-header text-center">
-                <h2 class="mt-2 mb-2 michroma-regular"><b>Sign up</b></h2>
-            </div>
-            <div class="card-body">
-                <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
-                    <form method="post">
-                        {% csrf_token %} 
-                        <div class="row mb-3">
-                          <label for="id_username" class="form-label">Username</label>
-                          <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" aria-describedby="usernameHelp">
-                          <div id="usernameHelp" class="form-text">150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+        <div class="row">
+            <div class="col">
+                <div class="card post-background" style="width: 25.1rem; border-radius: 25px;">
+                    <div class="card-header text-center">
+                        <h2 class="mt-2 mb-2 michroma-regular"><b>Sign up</b></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+                            <form method="post">
+                                {% csrf_token %} 
+                                <div class="row mb-3">
+                                  <label for="id_username" class="form-label">Username</label>
+                                  <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" aria-describedby="usernameHelp">
+                                  <div id="usernameHelp" class="form-text">150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                                </div>
+                                <div class="row mb-3">
+                                  <label for="id_password1" class="form-label">Password</label>
+                                  <input id="id_password1" class="form-control" type="password" name="password1" autocomplete="new-password" required="">
+                                </div>
+                                <div class="row mb-3 ps-3">
+                                    <ul><li>Your password must contain at least 8 characters.</li><li>Your password can’t be a commonly used password.</li><li>Your password can’t be entirely numeric.</li></ul>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="id_password2" class="form-label">Password confirmation</label>
+                                    <input id="id_password2" class="form-control" type="password" name="password2" autocomplete="new-password" required="">
+                                </div>
+                                <div class="row mt-5">
+                                    <button class="btn btn-primary mb-3" type="submit">Sign up</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="row mb-3">
-                          <label for="id_password1" class="form-label">Password</label>
-                          <input id="id_password1" class="form-control" type="password" name="password1" autocomplete="new-password" required="">
+                    </div>
+                </div>
+                <div class="card post-background mt-2" style="width: 25.1rem; border-radius: 25px;">
+                    <div class="card-body">
+                        <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+                            <div class="row text-center">
+                                <p class="mb-0">Already have an account? <a href="{% url 'login' %}" style="text-decoration: none;">Log in</a></p>
+                            </div>
                         </div>
-                        <div class="row mb-3 ps-3">
-                            <ul><li>Your password must contain at least 8 characters.</li><li>Your password can’t be a commonly used password.</li><li>Your password can’t be entirely numeric.</li></ul>
-                        </div>
-                        <div class="row mb-3">
-                            <label for="id_password2" class="form-label">Password confirmation</label>
-                            <input id="id_password2" class="form-control" type="password" name="password2" autocomplete="new-password" required="">
-                        </div>
-                        <div class="row mt-5">
-                            <button class="btn btn-primary" type="submit">Sign up</button>
-                        </div>
-                        <div class="row mt-5 text-center">
-                            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

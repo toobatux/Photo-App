@@ -1,4 +1,4 @@
-{% extends 'home/base.html' %} {% block content %}
+{% extends 'home/base.html' %} {% block content %} {% load static %}
 
 {% if messages %}
 <div class="sticky-top" style="top: 90px;">
@@ -16,29 +16,42 @@
 {% endif %}
 
 <div class="container d-flex justify-content-center" style="margin-top: 175px;">
-    <div class="card post-background" style="width: 35rem; border-radius: 25px;">
-        <div class="card-header text-center">
-            <h2 class="mt-2 mb-2 michroma-regular"><b>Login</b></h2>
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-auto d-none d-lg-block">
+            <img src="{% static 'home/pics.png' %}"/>
         </div>
-        <div class="card-body">
-            <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
-                <form method="post">
-                    {% csrf_token %} 
-                    <div class="row mb-3">
-                      <label for="id_username" class="form-label">Username</label>
-                      <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="">
+        <div class="col">
+            <div class="card post-background" style="width: 25.1rem; border-radius: 25px;">
+                <div class="card-header text-center">
+                    <h2 class="mt-2 mb-2 michroma-regular"><b>goyangi</b></h2>
+                </div>
+                <div class="card-body">
+                    <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+                        <form method="post">
+                            {% csrf_token %} 
+                            <div class="row mb-3">
+                              <label for="id_username" class="form-label">Username</label>
+                              <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="">
+                            </div>
+                            <div class="row mb-3">
+                              <label for="id_password" class="form-label">Password</label>
+                              <input id="id_password" class="form-control" type="password" name="password" autocomplete="current-password" required="">
+                            </div>
+                            <div class="row mt-5 mb-3">
+                                <button class="btn btn-primary" type="submit">Log in</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="row mb-3">
-                      <label for="id_password" class="form-label">Password</label>
-                      <input id="id_password" class="form-control" type="password" name="password" autocomplete="current-password" required="">
+                </div>
+            </div>
+            <div class="card post-background mt-2" style="width: 25.1rem; border-radius: 25px;">
+                <div class="card-body">
+                    <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+                        <div class="row text-center">
+                            <p class="mb-0">Don't have an account? <a href="{% url 'signup' %}" style="text-decoration: none;">Sign up</a></p>
+                        </div>
                     </div>
-                    <div class="row mt-5">
-                        <button class="btn btn-primary" type="submit">Login</button>
-                    </div>
-                    <div class="row mt-5 text-center">
-                        <p>New? <a href="{% url 'signup' %}">Create an account</a></p>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
