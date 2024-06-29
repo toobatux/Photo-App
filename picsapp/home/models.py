@@ -43,6 +43,7 @@ class Post(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    public = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Post by { self.author.user.username } on { self.created_on }"

@@ -9,7 +9,7 @@ class ProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['image', 'caption']
+        fields = ['image', 'caption', 'public']
 
 class CommentForm(forms.ModelForm):
     class Meta:

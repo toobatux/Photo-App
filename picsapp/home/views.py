@@ -23,7 +23,7 @@ def index(request):
     following_posts = Post.objects.filter(author__in = following_profiles).order_by('-created_on')
 
     following_posts_lt = Post.objects.filter(author__in = following_profiles, created_on__lt = today).order_by('-created_on')
-    not_following_posts = Post.objects.exclude(author__in = following_profiles).order_by('-created_on')
+    not_following_posts = Post.objects.exclude(public = False, author__in = following_profiles).order_by('-created_on')
 
     for post in following_posts:
         post.is_liked = post.likes.filter(id=request.user.id).exists()
@@ -48,14 +48,14 @@ def index(request):
 
 @login_required(login_url='/login/')
 def explore(request):
-    all_posts = Post.objects.all().order_by('-created_on')
+    public_posts = Post.objects.filter(public=True).order_by('-created_on')
 
-    for post in all_posts:
+    for post in public_posts:
         if post.likes.filter(id=request.user.id).exists():
             post.is_liked = post
 
     context = {
-        'all_posts': all_posts
+        'public_posts': public_posts
     }
     return render(request, "home/explore.html", context)
 
@@ -140,7 +140,7 @@ def edit_profile(request):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['image', 'caption']
+    fields = ['image', 'caption', 'public']
     template_name = 'home/create_post.html'
     success_url = reverse_lazy('index')
 
@@ -151,7 +151,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
-    fields = ['image', 'caption']
+    fields = ['image', 'caption', 'public']
     template_name = 'home/edit_post.html'
     success_url = reverse_lazy('index')
 
@@ -343,6 +343,10 @@ class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Account created successfully!')
+        return super().form_valid(form)
 
     # def form_valid(self, form):
     #     # Save the user instance
