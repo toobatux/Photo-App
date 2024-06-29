@@ -10,6 +10,21 @@
         </div>
     </div> -->
 
+    {% if messages %}
+    <div class="sticky-top" style="top: 90px;">
+    <div class="container d-flex justify-content-center ps-0 pe-0 ms-0">
+        <div class="messages" style="width: 50rem;">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    <b>{{ message }}</b>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>
+            {% endfor %}
+        </div>
+    </div>
+    </div>
+    {% endif %}
+
     {% if following_posts %}
     {% for post in following_posts %}
     <div class="row d-flex align-items-center justify-content-center mb-3">
@@ -31,7 +46,7 @@
                     </div>
                 </div>
             </div>
-            <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" style="max-height: 600px; object-fit: contain; background-color: black;">
+            <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" style="max-height: 500px; object-fit: contain; background-color: black;">
             <div class="card-body">
                 <div class="row like-bar">
                     <div class="col-auto ps-0 pe-0">
@@ -318,6 +333,14 @@
         }
         });
     }
+</script>
+
+<script>
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000); // 5 seconds timeout
+    });
 </script>
 
 

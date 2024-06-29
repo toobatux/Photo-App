@@ -10,9 +10,8 @@ from django.views import generic
 from .forms import ProfileForm, CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView
-from django.utils import timezone
 from datetime import date
-from itertools import cycle
+from django.contrib import messages
 
 @login_required(login_url='/login/')
 def index(request):
@@ -132,6 +131,7 @@ def edit_profile(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Profile updated successfully!')
             return redirect(reverse('profile', args=[request.user.profile.pk]))
     else:
         form = ProfileForm(instance=profile)
@@ -146,6 +146,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user.profile
+        messages.success(self.request, 'Post created successfully!')
         return super().form_valid(form)
     
 class PostUpdateView(LoginRequiredMixin, UpdateView):
@@ -156,6 +157,7 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user.profile
+        messages.success(self.request, 'Post updated successfully!')
         return super().form_valid(form)
     
 @login_required(login_url="/login/")
@@ -163,6 +165,7 @@ def delete_post(request, user_id, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.user == post.author.user:
         post.delete()
+        messages.success(request, 'Post deleted successfully!')
         return redirect(reverse('profile', args=[user_id]))
     else:
         return redirect(reverse('index'))
@@ -297,6 +300,7 @@ def save_post_index(request):
         else:
             current_user.saved_posts.add(post_to_save)
             saved = True
+            #messages.info(request, "Post added to saved.")
         
         return JsonResponse({'saved': saved})
     return JsonResponse({'error': 'Invalid request'}, status=400)

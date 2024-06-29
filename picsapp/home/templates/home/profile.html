@@ -1,5 +1,20 @@
 {% extends 'home/base.html' %} {% block content %}
 
+{% if messages %}
+<div class="sticky-top" style="top: 90px;">
+<div class="container ps-0 pe-0 ms-0">
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                <b>{{ message }}</b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+{% endif %}
+
 <div class="container ps-0 pe-0">
   <div class="row profile-top">
       <div class="col-auto d-flex justify-content-center align-items-center">
@@ -122,5 +137,14 @@
   </div>
   {% endif %}
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+      setTimeout(function() {
+          $('.alert').alert('close');
+      }, 5000); // 5 seconds timeout
+  });
+</script>
 
 {% endblock %}
