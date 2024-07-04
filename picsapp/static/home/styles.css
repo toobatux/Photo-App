@@ -26,9 +26,42 @@ post: #212121
 nav:  #212121
 */
 
+.profile-sticky-header {
+  transition: top 1s ease-in-out !important;
+}
+
 .fjalla-one-regular {
   font-family: "Fjalla One", sans-serif;
   font-weight: 400;
+  font-style: normal;
+}
+
+.rubik-regular {
+  font-family: "Rubik", sans-serif !important;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+p, h1, h2, a {
+  font-family: "Rubik", sans-serif !important;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  color: #f1f1f1;
+}
+
+h4 {
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.rubik-bold {
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
   font-style: normal;
 }
 
@@ -50,6 +83,38 @@ nav:  #212121
   font-style: normal;
 }
 
+.follower-container {
+  width: 100px;
+  height: 75px;
+  border-radius: 15px;
+  background-color: #101010; /* Initial background color */
+  transition: background-color 0.3s ease;
+}
+.follower-container:hover {
+  background-color: #181818; /* Background color when hovered */
+}
+
+.post-container {
+  transition: transform 0.2s ease
+}
+
+.post-container:hover {
+  transform: scale(1.05)
+}
+
+.search-result {
+  height: 65px;
+  border-radius: 15px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.search-result:hover {
+  background-color: #181818;
+}
+
 .like-bar {
   margin-left: 5px !important;
 }
@@ -61,10 +126,12 @@ nav:  #212121
 }
 
 .profile-pic {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
 }
+
+
 
 .profile-bottom {
   padding-left: 150px !important;
@@ -89,15 +156,19 @@ nav:  #212121
   }
 
   .profile-pic {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
   }
 }
 
+.body-background {
+  background-color: #101010;
+}
+
 
 body.body-background {
-  background-color: #000000;
+  background-color: #101010;
 }
 
 .svg-background {
@@ -105,7 +176,7 @@ body.body-background {
 }
 
 .svg-body-background {
-  fill: #000000;
+  fill: #101010;
 }
 
 .follow-background {

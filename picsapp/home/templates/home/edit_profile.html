@@ -1,7 +1,9 @@
 {% extends "home/base.html" %} {% block content %}
 
+<div class="sticky-top" style="top: 72.5px;">
 <div class="container mt-5 mb-5">
-  <div class="row d-flex align-items-center">
+  <div class="row d-flex align-items-center background-color" style="height: 60px;">
+    <div class="col-auto">
     <a href="{% url 'profile' user.profile.pk %}"
       ><i
         class="fa-solid fa-circle-chevron-left fa-2xl"
@@ -9,6 +11,8 @@
       ></i
     ></a>
   </div>
+  </div>
+</div>
 </div>
 
 <div class="container d-flex justify-content-center" style="margin-top: 50px">
@@ -21,16 +25,16 @@
         <div class="col-auto d-flex justify-content-center align-items-center">
           <img
             class="rounded-circle"
-            style="height: 125px; width: 125px; object-fit: cover"
+            style="height: 100px; width: 100px; object-fit: cover"
             src="{{ user.profile.profile_picture.url }}"
             alt="Profile Picture"
           />
         </div>
-        <div class="col d-flex justify-content-center align-items-center">
-          <div class="container ms-2">
-            <h1 class="w-100">{{ user.username }}</h1>
+        <div class="col d-flex align-items-center me-1 ps-0">
+          <div class="container pe-0">
+            <h1 class="w-100 mt-2 rubik-bold text-wrap" style="word-wrap: break-word; word-break: break-word;">{{ user.username }}</h1>
             {% if user.profile.bio %}
-            <p class="" style="white-space: normal">{{ user.profile.bio }}</p>
+            <p class="text-wrap" style="white-space: normal; word-wrap: break-word; max-width: 210px;">{{ user.profile.bio }}</p>
             {% endif %}
           </div>
         </div>
@@ -48,7 +52,7 @@
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="row mb-3">
-            <label for="id_profile_picture" class="form-label"
+            <label for="id_profile_picture" class="form-label rubik-bold"
               >Profile Picture</label
             >
             <input
@@ -70,10 +74,10 @@
                   </div>
                   {% endif %} -->
           <div class="row mb-3">
-            <label for="id_bio" class="form-label">Bio</label>
+            <label for="id_bio" class="form-label rubik-bold">Bio</label>
             <input
               id="id_bio"
-              class="form-control"
+              class="form-control rubik-regular"
               type="text"
               name="bio"
               rows="1"
@@ -81,11 +85,11 @@
             />
           </div>
           <div class="row mt-5">
-            <button class="btn btn-primary" type="submit">Save Changes</button>
+            <button class="btn btn-primary rubik-bold" type="submit">Save Changes</button>
           </div>
           <div class="row mt-3 mb-4">
             <a href="{% url 'profile' user.profile.pk %}" class="ps-0 pe-0"
-              ><button type="button" class="btn btn-secondary w-100">
+              ><button type="button" class="btn btn-outline-secondary w-100 rubik-bold">
                 Cancel
               </button></a
             >

@@ -28,7 +28,7 @@
     {% if following_posts %}
     {% for post in following_posts %}
     <div class="row d-flex align-items-center justify-content-center mb-3">
-        <div class="card ps-0 pe-0 post-background" style="width: 50rem;">
+        <div class="card ps-0 pe-0 post-background" style="width: 50rem; border-radius: 25px;">
             <div class="card-header pt-2 pb-2">
                 <div class="row d-flex align-items-center">
                     <div class="col-auto">
@@ -42,7 +42,7 @@
                         </a>
                     </div>
                     <div class="col ms-0 ps-0">
-                        <a href="{% url 'profile' post.author.pk %}" style="color: white; text-decoration: none;"><b>{{ post.author }}</b></a>
+                        <a href="{% url 'profile' post.author.pk %}" style="color: #f1f1f1; text-decoration: none;"><b>{{ post.author }}</b></a>
                     </div>
                 </div>
             </div>
@@ -86,13 +86,11 @@
                 <div class="row">
                     <div class="col-auto">
                         {% if post.total_likes == 0 %}
-                        <p class="mt-2 mb-0" id="{{ post.id }}"></p>
+                        <p class="mt-2 mb-0" id="likeCount_{{ post.id }}" data-bs-toggle="modal" data-bs-target="#likesModal{{ post.id }}"></p>
                         {% else %}
-                            {% if post.total_likes == 1 %}
-                                <p class="mt-2 mb-0" id="{{ post.id }}"><b>{{ post.total_likes }} like</b></p>
-                            {% else %}
-                                <p class="mt-2 mb-0" id="{{ post.id }}"><b>{{ post.total_likes }} likes</b></p>
-                            {% endif %}
+                        <button type="button" id="likeCount_{{ post.id }}" class="ps-0 mt-2" data-bs-toggle="modal" data-bs-target="#likesModal{{ post.id }}" style="background: transparent; border: none; color: lightgray;">
+                            <b>{{ post.total_likes }} {% if post.total_likes == 1 %} like {% else %} likes {% endif %}</b>
+                        </button>
                         {% endif %}
                     </div>
                 </div>
@@ -102,12 +100,12 @@
                     {% endif %}
                     {% if post.comments_list %}
                         {% if post.total_comments > 2 %}
-                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-0">View all {{ post.total_comments }} comments</p></a>
+                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-1" style="color: gray;">View all {{ post.total_comments }} comments</p></a>
                         {% else %}
-                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-0">View all comments</p></a>
+                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-1" style="color: gray;">View all comments</p></a>
                         {% endif %}
                         {% for comment in post.comments_list|slice:":2" %}
-                            <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-1 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
+                            <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-0 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
                         {% endfor %}
                     {% endif %}
                 </div>
@@ -117,14 +115,67 @@
             </div>
         </div>
     </div>
+        <!-- Modal -->
+        <div class="modal" id="likesModal{{ post.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+              <div class="modal-content" style="background-color: #101010; color: white; max-height:500px;">
+                <div class="modal-header" style="border: none;">
+                  <h1 class="modal-title fs-5 ms-auto" id="exampleModalLabel"><b>Likes</b></h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                <div class="modal-body">
+                    {% for user in post.liked_users %}
+                    <!-- <div class="row d-flex align-items-center mb-4 ms-1">
+                        <div class="col-auto">
+                            <a href="{% url 'profile' user.profile.pk %}">
+                            <img class="rounded-circle" 
+                            style="height: 50px; width: 50px; object-fit: cover;"
+                            src="{{ user.profile.profile_picture.url }}"
+                            alt="Profile Picture"
+                            />
+                            </a>
+                        </div>
+                        <div class="col-8">
+                            <div>
+                                <a href="{% url 'profile' user.profile.pk %}" style="color: #f1f1f1; text-decoration: none;"><b>{{ user.username }}</b></a>
+                            </div>
+                        </div>
+                    </div> -->
+                    <a href="{% url 'profile' user.profile.pk %}" style="color: lightgray; text-decoration: none">
+                        <div class="search-result">
+                            <div class="row w-100 d-flex align-items-center">
+                                <div class="col-auto ps-4">
+                                    <img
+                                        class="rounded-circle"
+                                        style="height: 50px; width: 50px; object-fit: cover"
+                                        src="{{ user.profile.profile_picture.url }}"
+                                        alt="Profile Picture"
+                                    />
+                                </div>
+                                <div class="col-auto">
+                                    <div>
+                                        <b>{{ user.username }}</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer" style="border: none;">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><b>Close</b></button>
+                </div>
+              </div>
+            </div>
+        </div>
     {% endfor %}
     
     {% endif %}
     <div class="container d-flex align-items-center justify-content-center ps-0 pe-0">
-        <div class="card mb-3 post-background" style="width: 50rem; height: 220px;">
+        <div class="card mb-3 post-background" style="width: 50rem; height: 220px; border-radius: 25px;">
             <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
                 <i class="fa-solid fa-circle-check fa-3x mb-3"></i>
-                <h2><b>You're all caught up!</b></h2>
+                <h2 class="rubik-bold">You're all caught up!</h2>
             </div>
         </div>
     </div>
@@ -132,9 +183,10 @@
                  <p>Find friends on the <a href="{% url 'explore' %}" style="color: white;">explore</a> page!</p>
                 <p>When users you follow post something, it will appear here.</p>
             </div> -->
+
     {% for post in not_following_posts %}
     <div class="row d-flex align-items-center justify-content-center mb-3">
-        <div class="card ps-0 pe-0 post-background" style="width: 50rem;">
+        <div class="card ps-0 pe-0 post-background" style="width: 50rem; border-radius: 25px;">
             <div class="card-header pt-2 pb-2">
                 <div class="row d-flex align-items-center">
                     <div class="col-auto">
@@ -148,12 +200,14 @@
                         </a>
                     </div>
                     <div class="col ms-0 ps-0">
-                        <a href="{% url 'profile' post.author.pk %}" style="color: white; text-decoration: none;"><b>{{ post.author }}</b></a>
+                        <a href="{% url 'profile' post.author.pk %}" class="rubik-bold" style="color: lightgray; text-decoration: none;">{{ post.author }}</a>
                     </div>
                     <div class="col-auto">
                         <form id="followForm{{ post.author.pk }}" onsubmit="event.preventDefault(); followUser('{{ post.author.pk }}')">
                             {% csrf_token %}
-                            <button type="submit" id="followBtn_{{ post.author.pk }}" class="btn btn-outline-secondary follow-btn user-{{ post.author.pk }}"><b>Follow</b></button>
+                            <button type="submit" id="followBtn_{{ post.author.pk }}" class="btn btn-outline-secondary follow-btn user-{{ post.author.pk }}">
+                                <b class="rubik-bold">Follow</b>
+                            </button>
                         </form>
                         <!-- <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary"><b>Follow</b></a> -->
                     </div>
@@ -214,9 +268,9 @@
                     {% endif %}
                     {% if post.comments_list %}
                         {% if post.total_comments > 2 %}
-                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-0">View all {{ post.total_comments }} comments</p></a>
+                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:darkgray; text-decoration: none;"><p class="mb-0">View all {{ post.total_comments }} comments</p></a>
                         {% else %}
-                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-0">View all comments</p></a>
+                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:darkgray; text-decoration: none;"><p class="mb-0">View all comments</p></a>
                         {% endif %}
                         {% for comment in post.comments_list|slice:":2" %}
                             <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-1 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
@@ -230,6 +284,7 @@
         </div>
     </div>
     {% endfor %}
+
 </div>
 
 <!-- <script>
@@ -260,11 +315,10 @@
         success: function(response) {
             if (response.liked) {
                 $("#likeBtn_" + postId).html('<i class="fa-solid fa-heart fa-xl" style="color: red;"></i>');
-                updateLikeCount(postId, response.total_likes);
             } else {
                 $("#likeBtn_" + postId).html('<i class="fa-regular fa-heart fa-xl" style="color: white;"></i>');
-                updateLikeCount(postId, response.total_likes);
             }
+            updateLikeCount(postId, response.total_likes);
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -272,8 +326,21 @@
         });
     }
 
+    // function updateLikeCount(postId, totalLikes) {
+    // var likeCountElement = $("#" + postId);
+    // if (totalLikes >= 0) {
+    //     if (totalLikes == 0) {
+    //         likeCountElement.html('');
+    //     } else if (totalLikes === 1) {
+    //         likeCountElement.html('<b>' + totalLikes + ' like</b>');
+    //     } else {
+    //         likeCountElement.html('<b>' + totalLikes + ' likes</b>');
+    //     }
+    // }
+    // }
+
     function updateLikeCount(postId, totalLikes) {
-    var likeCountElement = $("#" + postId);
+    var likeCountElement = $("#likeCount_" + postId);
     if (totalLikes >= 0) {
         if (totalLikes == 0) {
             likeCountElement.html('');
@@ -298,11 +365,11 @@
                 var buttons = document.querySelectorAll(".user-" + userId);
                 if (response.follows) {
                     buttons.forEach(function(button) {
-                        button.innerHTML = '<b>Following</b>';
+                        button.innerHTML = '<b class="rubik-bold">Following</b>';
                     });
                 } else {
                     buttons.forEach(function(button) {
-                        button.innerHTML = '<b>Follow</b>';
+                        button.innerHTML = '<b class="rubik-bold">Follow</b>';
                     });
                 }
             },

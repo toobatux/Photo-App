@@ -3,11 +3,13 @@
 
 {% block content %}
 
-<div class="row d-flex justify-content-center align-items-center mt-4">
+<div class="sticky-top" style="top: 72px;">
+<div class="row d-flex justify-content-center align-items-center body-background" style="height: 60px;">
   <form method="get" action="{% url 'search' %}" class="d-flex" role="search" style="width: 27rem;">
-    <input id="id_query" type="text" name="query" class="form-control me-2" placeholder="Find your friends" aria-label="Search" maxlength="50" required="">
-    <button class="btn btn-outline-secondary" type="submit">Search</button>
+    <input id="id_query" type="text" name="query" class="form-control me-2 rubik-bold" placeholder="Find your friends" aria-label="Search" maxlength="50" required="">
+    <button class="btn btn-outline-secondary rubik-bold" type="submit"><b>Search</b></button>
   </form>
+</div>
 </div>
 
 {% if public_posts %}
@@ -15,12 +17,14 @@
     {% for post in public_posts %}
     <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center">
       <a href="{% url 'post_detail_explore' post.author.pk post.pk %}">
+        <div class="post-container">
           <div class="post-card">
             <img class="img-fluid shadow-lg explore-post" 
             src="{{ post.image.url }}"
             alt="Post Image"
             style="border-radius: 25px; object-fit: cover;"
             />
+          </div>
         </div>
       </a>
     </div>

@@ -3,17 +3,17 @@
   <div class="container pt-2 pb-2">
     <a class="navbar-brand" href="{% url 'index' %}">
       <i class="fa-solid fa-cat" style="color: white;"></i>
-      <b class="michroma-regular">goyangi</b></a>      
+      <b class="rubik-bold">GOYANGI</b></a>      
     <ul class="navbar-nav me-auto">
       {% if user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link michroma-regular" aria-current="page" href="{% url 'explore' %}">explore</a>
+        <a class="nav-link rubik-bold" aria-current="page" href="{% url 'explore' %}">EXPLORE</a>
       </li>
       {% endif %}
     </ul>
     <ul class="navbar-nav d-flex flex-row">
       {% if user.is_authenticated %}
-      <li class="nav-item me-3 d-flex align-items-center">
+      <li class="nav-item me-4 d-flex align-items-center">
         <a><i class="fa-regular fa-bell fa-xl"></i></a>
       </li>
       <li class="nav-item">
@@ -28,10 +28,10 @@
       </li>
       {% else %}
       <li class="nav-item">
-          <a class="nav-link active me-1 btn pt-0 pb-0" aria-current="page" href="{% url 'login' %}"><button class="btn btn-primary mt-0 mb-0 michroma-regular">Log in</button></a>
+          <a class="nav-link active me-1 btn pt-0 pb-0" aria-current="page" href="{% url 'login' %}"><button class="btn btn-primary mt-0 mb-0 rubik-regular"><b>Log in</b></button></a>
       </li>
       <li class="nav-item">
-          <a class="nav-link active pt-0 pb-0" aria-current="page" href="{% url 'signup' %}"><button class="btn btn-outline-secondary mt-0 mb-0 michroma-regular">Sign Up</button></a>
+          <a class="nav-link active pt-0 pb-0" aria-current="page" href="{% url 'signup' %}"><button class="btn btn-outline-secondary mt-0 mb-0 rubik-regular"><b>Sign up</b></button></a>
       </li>
       {% endif %}
   </ul>

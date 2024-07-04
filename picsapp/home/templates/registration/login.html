@@ -15,40 +15,42 @@
 </div>
 {% endif %}
 
-<div class="container d-flex justify-content-center" style="margin-top: 175px;">
+<div class="container d-flex justify-content-center" style="margin-top: 100px;">
     <div class="row d-flex justify-content-center align-items-center">
         <div class="col-auto d-none d-lg-block">
             <img src="{% static 'home/pics.png' %}"/>
         </div>
         <div class="col">
-            <div class="card post-background" style="width: 25.1rem; border-radius: 25px;">
+            <div class="card post-background shadow-lg" style="width: 25.1rem; border-radius: 25px;">
                 <div class="card-header text-center">
-                    <h2 class="mt-2 mb-2 michroma-regular"><b>goyangi</b></h2>
+                    <h2 class="mt-2 mb-2 rubik-bold"><b>GOYANGI</b></h2>
                 </div>
                 <div class="card-body">
                     <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
                         <form method="post">
                             {% csrf_token %} 
                             <div class="row mb-3">
-                              <label for="id_username" class="form-label">Username</label>
-                              <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="">
+                              <label for="id_username" class="form-label rubik-bold">USERNAME</label>
+                              <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="12" required=""
+                              style="background-color: lightgray;">
                             </div>
                             <div class="row mb-3">
-                              <label for="id_password" class="form-label">Password</label>
-                              <input id="id_password" class="form-control" type="password" name="password" autocomplete="current-password" required="">
+                              <label for="id_password" class="form-label rubik-bold">PASSWORD</label>
+                              <input id="id_password" class="form-control" type="password" name="password" autocomplete="current-password" required=""
+                              style="background-color: lightgray;">
                             </div>
                             <div class="row mt-5 mb-3">
-                                <button class="btn btn-primary" type="submit">Log in</button>
+                                <button class="btn btn-primary rubik-bold" type="submit">Log in</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="card post-background mt-2" style="width: 25.1rem; border-radius: 25px;">
+            <div class="card post-background shadow-lg mt-2" style="width: 25.1rem; border-radius: 25px;">
                 <div class="card-body">
                     <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
                         <div class="row text-center">
-                            <p class="mb-0">Don't have an account? <a href="{% url 'signup' %}" style="text-decoration: none;">Sign up</a></p>
+                            <p class="mb-0">Don't have an account? <a href="{% url 'signup' %}" class="rubik-bold" style="text-decoration: none;">Sign up</a></p>
                         </div>
                     </div>
                 </div>
