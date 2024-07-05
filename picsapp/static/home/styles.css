@@ -91,7 +91,7 @@ h4 {
   transition: background-color 0.3s ease;
 }
 .follower-container:hover {
-  background-color: #181818; /* Background color when hovered */
+  background-color: #303030; /* Background color when hovered */
 }
 
 .post-container {
@@ -108,11 +108,10 @@ h4 {
   transition: background-color 0.3s ease;
   display: flex;
   align-items: center;
-  margin-top: 10px;
 }
 
 .search-result:hover {
-  background-color: #181818;
+  background-color: #303030;
 }
 
 .like-bar {
@@ -139,7 +138,7 @@ h4 {
 
 @media (max-width: 768px) {
   .profile-top {
-    padding-left: 30px !important; /* Margin for screens wider than 768px */
+    padding-left: 10px !important; /* Margin for screens wider than 768px */
   }
 
   .profile-bottom {
@@ -159,6 +158,12 @@ h4 {
     width: 120px;
     height: 120px;
     object-fit: cover;
+  }
+}
+
+@media (max-width: 450px) {
+  .profile-edit-btn {
+    display: none !important;
   }
 }
 

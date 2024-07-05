@@ -27,7 +27,7 @@
         {% endif %}
       </div>
     <div class="col d-flex align-items-center me-1 ps-0">
-      <div class="container pe-0">
+      <div class="container ps-2 pe-0">
         <h1 class="w-100 mt-2 rubik-bold text-wrap" style="word-wrap: break-word; word-break: break-word;">{{ profile.user.username }}</h1>
         {% if profile.bio %}
         <p class="text-wrap mb-2" style="white-space: normal; word-wrap: break-word; max-width: 210px;">{{ profile.bio }}</p>
@@ -59,12 +59,12 @@
           alt="Profile Picture"
         />
       </div>
-      <div class="col-auto me-auto">
-        <a href="" style="color: white; text-decoration: none;"><b class="rubik-bold">{{ profile.user.username }}</b></a>
+      <div class="col-auto">
+        <a href="" style="color: white; text-decoration: none; word-wrap: break-word; word-break: break-word;"><b class="rubik-bold">{{ profile.user.username }}</b></a>
       </div>
       {% if profile.user == user %}
-      <div class="col-auto d-flex float-end pe-0">
-        <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary" style="width: 7.5rem;"><b>Edit Profile</b></a>
+      <div class="col-auto d-flex float-end pe-0 ms-auto">
+        <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary profile-edit-btn" style="width: 7.5rem;"><b>Edit Profile</b></a>
       </div>
       <div class="col-auto d-flex float-end pe-0">
         <a href="{% url 'settings' %}" class="btn btn-outline-secondary" style="width: 3rem;"><i class="fa-solid fa-gear"></i></a>  
@@ -73,6 +73,7 @@
     </div>
   </div>
 </div>
+
 
 
 <div class="container ps-0 pe-0 mb-5">

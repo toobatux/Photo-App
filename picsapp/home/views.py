@@ -111,6 +111,9 @@ def search(request):
     else:
         form = SearchForm()
 
+    for profile in results:
+        profile.is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+
     context = {
         'form': form,
         'query': query,
@@ -124,13 +127,29 @@ def search(request):
 def following_list(request, user_id):
     current_user_profile = get_object_or_404(Profile, pk=user_id)
     following = current_user_profile.follows.all()
-    return render(request, "home/following_list.html", {'profile': current_user_profile, 'following': following})
+    followers = current_user_profile.followed_by.all()
+
+    for profile in following:
+        profile.is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+
+    for profile in followers:
+        profile.is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+
+    return render(request, "home/following_list.html", {'profile': current_user_profile, 'following': following, 'followers': followers})
 
 @login_required(login_url="/login/")
 def follower_list(request, user_id):
     current_user_profile = get_object_or_404(Profile, pk=user_id)
     followers = current_user_profile.followed_by.all()
-    return render(request, "home/follower_list.html", {'profile': current_user_profile, 'followers': followers})
+    following = current_user_profile.follows.all()
+
+    for profile in followers:
+        profile.is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+
+    for profile in following:
+        profile.is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+
+    return render(request, "home/follower_list.html", {'profile': current_user_profile, 'followers': followers, 'following': following})
 
 # def toggle_login(request, pk):
 #     target_profile = get_object_or_404(Profile, pk)
@@ -315,6 +334,7 @@ def like_post_index(request):
         else:
             post.likes.add(request.user)
             liked = True
+
         total_likes = post.total_likes()
         return JsonResponse({'liked': liked, 'total_likes': total_likes})
     return JsonResponse({'error': 'Invalid request'}, status=400)

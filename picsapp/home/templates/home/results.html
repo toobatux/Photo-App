@@ -50,9 +50,10 @@
 </div>
 
 {% if query %}
-<div class="container mt-5" style="width: 27rem">
+<div class="container d-flex justify-content-center">
+<div class="row d-flex justify-content-center mt-5" style="max-width: 27rem">
   {% for profile in results %}
-  <a href="{% url 'results_profile' profile.pk %}" style="color: lightgray; text-decoration: none">
+  <a href="{% url 'results_profile' profile.pk %}" class="ps-0 pe-0 mt-2" style="color: lightgray; text-decoration: none">
     <div class="search-result">
     <div class="row w-100 d-flex align-items-center">
         <div class="col-auto ps-4">
@@ -63,11 +64,25 @@
             alt="Profile Picture"
           />
         </div>
-        <div class="col-auto">
+        <div class="col-auto ps-0">
           <div>
             <b>{{ profile.user.username }}</b>
           </div>
         </div>
+        {% if profile != user.profile %}
+        <div class="col-auto d-flex ms-auto pe-0">
+          <form id="followForm{{ profile.pk }}" onsubmit="event.preventDefault(); followUser('{{ profile.pk }}')">
+              {% csrf_token %}
+              <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}">
+                {% if profile.is_followed %}
+                  <b class="rubik-bold">Following</b>
+                {% else %}
+                  <b class="rubik-bold">Follow</b>
+                {% endif %}
+              </button>
+          </form>
+        </div>
+        {% endif %}
       </div>
     </div>
   </a>
@@ -77,4 +92,39 @@
   </div>
   {% endfor %}
 </div>
-{% endif %} {% endblock %}
+</div>
+{% endif %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    function followUser(userId) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'follow_user_index' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'user_id': userId,
+            },
+            success: function(response) {
+                var buttons = document.querySelectorAll(".user-" + userId);
+                if (response.follows) {
+                    buttons.forEach(function(button) {
+                        button.innerHTML = '<b class="rubik-bold">Following</b>';
+                    });
+                } else {
+                    buttons.forEach(function(button) {
+                        button.innerHTML = '<b class="rubik-bold">Follow</b>';
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
+
+{% endblock %}
