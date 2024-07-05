@@ -1,142 +1,244 @@
 {% extends 'home/base.html' %} {% block content %}
 
+<!-- <style>
+  .profile-background {
+      /* Use a linear gradient from the dominant color to #101010 */
+      background: linear-gradient(to top, {{ pic_color }}, #101010);
+  }
+</style> -->
+
 {% if messages %}
-<div class="sticky-top" style="top: 90px;">
-<div class="container ps-0 pe-0 ms-0">
+<div class="sticky-top" style="top: 90px">
+  <div class="container ps-0 pe-0 ms-0">
     <div class="messages">
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
-                <b class="rubik-bold">{{ message }}</b>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-         </div>
-        {% endfor %}
+      {% for message in messages %}
+      <div
+        class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+        role="alert"
+      >
+        <b class="rubik-bold">{{ message }}</b>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endfor %}
     </div>
-</div>
+  </div>
 </div>
 {% endif %}
 
-<div class="container ps-0 pe-0">
-  <div class="row profile-top" id="profileSection">
+<div class="container ps-0 pe-0" style="min-height: 100vh;">
+  <div
+    style="background-image: linear-gradient(to top, #101010, {{pic_color}}); border-radius: 15px;"
+  >
+    <!-- <div style="background-color: {{pic_color}}; border-radius: 15px;"> -->
+    <div class="row profile-top" id="profileSection" style="z-index: 100">
       <div class="col-auto d-flex justify-content-center align-items-center">
         {% if profile.profile_picture %}
         <img
-          class="rounded-circle profile-pic"
+          class="rounded-circle profile-pic shadow-lg"
           src="{{ profile.profile_picture.url }}"
           alt="Profile Picture"
         />
         {% endif %}
       </div>
-    <div class="col d-flex align-items-center me-1 ps-0">
-      <div class="container ps-2 pe-0">
-        <h1 class="w-100 mt-2 rubik-bold text-wrap" style="word-wrap: break-word; word-break: break-word;">{{ profile.user.username }}</h1>
-        {% if profile.bio %}
-        <p class="text-wrap mb-2" style="white-space: normal; word-wrap: break-word; max-width: 210px;">{{ profile.bio }}</p>
-        {% endif %}
+      <div class="col d-flex align-items-center me-1 ps-0">
+        <div class="container ps-2 pe-0">
+          <h1
+            class="w-100 mt-2 rubik-bold text-wrap"
+            style="word-wrap: break-word; word-break: break-word"
+          >
+            {{ profile.user.username }}
+          </h1>
+          {% if profile.bio %}
+          <p
+            class="text-wrap mb-2"
+            style="white-space: normal; word-wrap: break-word; max-width: 210px"
+          >
+            {{ profile.bio }}
+          </p>
+          {% endif %} {% if profile.user == user %}
+          <div class="row">
+            <div class="col-auto pt-1 pe-0 mb-1">
+              <a
+                href="{% url 'edit_profile' %}"
+                class="btn btn-secondary"
+                style="width: 7.5rem"
+                ><b>Edit Profile</b></a
+              >
+            </div>
+            <div class="col-auto pt-1 pe-0 me-0">
+              <a
+                href="{% url 'settings' %}"
+                class="btn btn-secondary"
+                style="width: 3rem"
+                ><i class="fa-solid fa-gear"></i
+              ></a>
+              <!-- <br/> -->
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- </div> -->
+  </div>
+
+  <div
+    id="stickyHeader"
+    class="sticky-top d-none profile-sticky-header"
+    style="top: -65px; position: fixed; z-index: 1000"
+  >
+    <div
+      class="container d-flex justify-content-center align-items-center ps-0 body-background"
+      style="
+        width: 100vw;
+        height: 65px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+      "
+    >
+      <div
+        id="profileTop"
+        class="row w-100 pe-3 pt-0 pb-0 d-flex align-items-center"
+      >
+        <div class="col-auto">
+          <img
+            class="rounded-circle"
+            style="height: 40px; width: 40px; object-fit: cover"
+            src="{{ profile.profile_picture.url }}"
+            alt="Profile Picture"
+          />
+        </div>
+        <div class="col-auto">
+          <a
+            href=""
+            style="
+              color: white;
+              text-decoration: none;
+              word-wrap: break-word;
+              word-break: break-word;
+            "
+            ><b class="rubik-bold">{{ profile.user.username }}</b></a
+          >
+        </div>
         {% if profile.user == user %}
-        <div class="row">
-          <div class="col-auto pt-1 pe-0 mb-1">
-            <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary" style="width: 7.5rem;"><b>Edit Profile</b></a>
-          </div>
-          <div class="col-auto pt-1 pe-0 me-0">
-            <a href="{% url 'settings' %}" class="btn btn-outline-secondary" style="width: 3rem;"><i class="fa-solid fa-gear"></i></a>  
-            <!-- <br/> -->
-          </div>
+        <div class="col-auto d-flex float-end pe-0 ms-auto">
+          <a
+            href="{% url 'edit_profile' %}"
+            class="btn btn-outline-secondary profile-edit-btn"
+            style="width: 7.5rem"
+            ><b>Edit Profile</b></a
+          >
+        </div>
+        <div class="col-auto d-flex float-end pe-0">
+          <a
+            href="{% url 'settings' %}"
+            class="btn btn-outline-secondary"
+            style="width: 3rem"
+            ><i class="fa-solid fa-gear"></i
+          ></a>
         </div>
         {% endif %}
       </div>
     </div>
   </div>
-</div>
 
-<div id="stickyHeader" class="sticky-top d-none profile-sticky-header" style="top: -65px; position: fixed; z-index: 1000; transition: top 0.1s ease-in-out;">
-  <div class="container d-flex justify-content-center align-items-center ps-0 body-background" style="width:100vw; height: 65px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
-    <div id="profileTop" class="row w-100 pe-3 pt-0 pb-0 d-flex align-items-center">
-      <div class="col-auto">
-        <img
-          class="rounded-circle"
-          style="height: 40px; width: 40px;  object-fit: cover;"
-          src="{{ profile.profile_picture.url }}"
-          alt="Profile Picture"
-        />
+  <div class="container ps-0 pe-0 mb-4">
+    <hr class="mb-1" />
+
+    <div
+      class="row d-flex justify-content-center align-items-center text-center"
+    >
+      <div class="col-auto me-4">
+        <div><h4 style="color: white">{{ post_count }}</h4></div>
+        {% if post_count == 1 %}
+        <div>
+          <p style="color: lightgray; margin: 0px; padding: 0px">Post</p>
+        </div>
+        {% else %}
+        <div>
+          <p style="color: lightgray; margin: 0px; padding: 0px">Posts</p>
+        </div>
+        {% endif %}
       </div>
-      <div class="col-auto">
-        <a href="" style="color: white; text-decoration: none; word-wrap: break-word; word-break: break-word;"><b class="rubik-bold">{{ profile.user.username }}</b></a>
+      <div class="col-auto pe-0">
+        <a
+          href="{% url 'follower_list' profile.pk %}"
+          style="color: white; text-decoration: none"
+        >
+          <div
+            class="follower-container d-flex align-items-center justify-content-center"
+          >
+            <div class="d-flex flex-column align-items-center">
+              <div><h4>{{ profile.followers_count }}</h4></div>
+              <div><p style="margin: 0px; padding: 0px">Followers</p></div>
+            </div>
+          </div>
+        </a>
       </div>
-      {% if profile.user == user %}
-      <div class="col-auto d-flex float-end pe-0 ms-auto">
-        <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary profile-edit-btn" style="width: 7.5rem;"><b>Edit Profile</b></a>
+      <div class="col-auto pe-0">
+        <a
+          href="{% url 'following_list' profile.pk %}"
+          style="color: white; text-decoration: none"
+        >
+          <div
+            class="follower-container d-flex align-items-center justify-content-center"
+          >
+            <div class="d-flex flex-column align-items-center">
+              <div><h4>{{ profile.following_count }}</h4></div>
+              <div><p style="margin: 0px; padding: 0px">Following</p></div>
+            </div>
+          </div>
+        </a>
       </div>
-      <div class="col-auto d-flex float-end pe-0">
-        <a href="{% url 'settings' %}" class="btn btn-outline-secondary" style="width: 3rem;"><i class="fa-solid fa-gear"></i></a>  
-      </div>
-      {% endif %}
     </div>
+
+    <hr class="mt-1" />
   </div>
-</div>
 
-
-
-<div class="container ps-0 pe-0 mb-5">
-<hr/>
-
-<div class="row d-flex justify-content-center align-items-center text-center">
-  <div class="col-auto me-4">
-    <div><h4 style="color: white;">{{ post_count }}</h4></div>
-    {% if post_count == 1 %}
-    <div><p style="color: lightgray; margin:0px; padding:0px;">Post</p></div>
-    {% else %}
-    <div><p style="color: lightgray; margin:0px; padding:0px;">Posts</p></div>
-    {% endif %}
+  {% if profile.user == user %}
+  <div class="row mb-4 mt-4 ps-3 pe-3">
+    <a
+      href="{% url 'create_post' %}"
+      class="btn btn-secondary rubik-bold"
+      style="font-size: 20px"
+      ><b>New Post</b></a
+    >
+    <!-- <a href="{% url 'create_post' %}" class="btn btn-secondary"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a> -->
   </div>
-  <div class="col-auto pe-0">
-    <a href="{% url 'follower_list' profile.pk %}" style="color:white; text-decoration: none;">
-      <div class="follower-container d-flex align-items-center justify-content-center">
-      <div class="d-flex flex-column align-items-center">
-        <div><h4>{{ profile.followers_count }}</h4></div>
-        <div><p style="margin:0px; padding:0px;">Followers</p></div>
-      </div>
-    </div>
-    </a>
-  </div>
-  <div class="col-auto pe-0">
-    <a href="{% url 'following_list' profile.pk %}" style="color:white; text-decoration: none;">
-      <div class="follower-container d-flex align-items-center justify-content-center">
-      <div class="d-flex flex-column align-items-center">
-        <div><h4>{{ profile.following_count }}</h4></div>
-        <div><p style="margin:0px; padding:0px;">Following</p></div>
-      </div>
-      </div>
-    </a>
-  </div>
-</div>
-
-<hr/>
-</div>
-
-{% if profile.user == user %}
-<div class="row mb-5 mt-4 ps-3 pe-3">
-  <a href="{% url 'create_post' %}" class="btn btn-secondary rubik-bold" style="font-size:20px;"><b>New Post</b></a>
-  <!-- <a href="{% url 'create_post' %}" class="btn btn-secondary"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a> -->
-</div>
-{% else %}
+  {% else %}
   <form action="{% url 'follow_user' profile.pk %}" method="POST">
-    {% csrf_token %}
-    {% if is_followed %}
+    {% csrf_token %} {% if is_followed %}
     <div class="row mb-5 mt-4 ps-3 pe-3">
-      <button type="submit" class="btn btn-secondary rubik-bold" style="font-size: 20px;"><b>Unfollow</b></button>
+      <button
+        type="submit"
+        class="btn btn-secondary rubik-bold"
+        style="font-size: 20px"
+      >
+        <b>Unfollow</b>
+      </button>
     </div>
     {% else %}
     <div class="row mb-5 mt-4 ps-3 pe-3">
-      <button type="submit" class="btn btn-primary rubik-bold" style="font-size: 20px;"><b>Follow</b></button>
+      <button
+        type="submit"
+        class="btn btn-primary rubik-bold"
+        style="font-size: 20px"
+      >
+        <b>Follow</b>
+      </button>
     </div>
     {% endif %}
   </form>
-{% endif %}
+  {% endif %}
 
-<div class="row">
-  {% if profile_posts %}
-    {% for post in profile_posts %}
-      <!-- <div class="col-md-4 mb-5 d-flex align-items-center justify-content-center">
+  <div class="row mb-3">
+    {% if profile_posts %} {% for post in profile_posts %}
+    <!-- <div class="col-md-4 mb-5 d-flex align-items-center justify-content-center">
       <a href="{% url 'post_detail' post.author.pk post.pk %}">
           <img class="img-fluid shadow-lg" 
           style="height: 375px; width: 375px;  object-fit: cover; border-radius: 25px;"
@@ -145,71 +247,75 @@
           />
       </a>
       </div> -->
-      <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center">
-        <a href="{% url 'post_detail' post.author.pk post.pk %}">
-          <div class="post-container">
+    <div
+      class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center"
+    >
+      <a href="{% url 'post_detail' post.author.pk post.pk %}">
+        <div class="post-container">
           <div class="post-card">
-            <img class="img-fluid shadow-lg explore-post" 
+            <img
+              class="img-fluid shadow-lg explore-post"
               src="{{ post.image.url }}"
               alt="Post Image"
-              style="border-radius: 25px; object-fit: cover;"
+              style="border-radius: 25px; object-fit: cover"
             />
           </div>
         </div>
-        </a>
-      </div>
-    {% endfor %}
-  {% else %}
-  <div class="container d-flex justify-content-center align-items-center" style="margin-top: 30px;">
-    <div class="row">
-      <div class="col text-center">
-        <i class="fa-solid fa-camera fa-2xl mb-4" style="color: gray;"></i>
-        <h3 class="rubik-bold" style="color: gray;">No Posts</h3>
+      </a>
+    </div>
+    {% endfor %} {% else %}
+    <div
+      class="container d-flex justify-content-center align-items-center no-posts"
+    >
+      <div class="row">
+        <div class="col text-center">
+          <i class="fa-solid fa-camera fa-2xl mb-4" style="color: gray"></i>
+          <h3 class="rubik-bold" style="color: gray">No Posts</h3>
+        </div>
       </div>
     </div>
+    {% endif %}
   </div>
-  {% endif %}
-</div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function() {
-    // var profileSectionHeight = $('#profileSection').height();
-    // var stickyHeader = $('#stickyHeader');
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // var profileSectionHeight = $('#profileSection').height();
+      // var stickyHeader = $('#stickyHeader');
 
-    // $(window).scroll(function() {
-    //     if ($(window).scrollTop() > profileSectionHeight) {
-    //         stickyHeader.removeClass('d-none');
-    //     } else {
-    //         stickyHeader.addClass('d-none');
-    //     }
-    // });
-    var profileSectionHeight = $('#profileSection').height();
-    var stickyHeader = $('#stickyHeader');
+      // $(window).scroll(function() {
+      //     if ($(window).scrollTop() > profileSectionHeight) {
+      //         stickyHeader.removeClass('d-none');
+      //     } else {
+      //         stickyHeader.addClass('d-none');
+      //     }
+      // });
+      var profileSectionHeight = $("#profileSection").height();
+      var stickyHeader = $("#stickyHeader");
 
-    $(window).scroll(function() {
-      if ($(window).scrollTop() > profileSectionHeight) {
-        if (stickyHeader.hasClass('d-none')) {
-          stickyHeader.removeClass('d-none');
-          setTimeout(function() {
-            stickyHeader.css('top', '71.5px');
-          }, 10); // Slight delay to ensure the class removal takes effect
+      $(window).scroll(function () {
+        if ($(window).scrollTop() > profileSectionHeight) {
+          if (stickyHeader.hasClass("d-none")) {
+            stickyHeader.removeClass("d-none");
+            setTimeout(function () {
+              stickyHeader.css("top", "71.5px");
+            }, 10); // Slight delay to ensure the class removal takes effect
+          }
+        } else {
+          if (!stickyHeader.hasClass("d-none")) {
+            stickyHeader.css("top", "-65px");
+            setTimeout(function () {
+              stickyHeader.addClass("d-none");
+            }, 300); // Duration of the animation
+          }
         }
-      } else {
-        if (!stickyHeader.hasClass('d-none')) {
-          stickyHeader.css('top', '-65px');
-          setTimeout(function() {
-            stickyHeader.addClass('d-none');
-          }, 300); // Duration of the animation
-        }
-      }
-    });
+      });
 
-
-      setTimeout(function() {
-          $('.alert').alert('close');
+      setTimeout(function () {
+        $(".alert").alert("close");
       }, 5000); // 5 seconds timeout
-  });
-</script>
+    });
+  </script>
 
-{% endblock %}
+  {% endblock %}
+</div>

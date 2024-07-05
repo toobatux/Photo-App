@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '3c5e-173-71-175-175.ngrok-free.app',
+    '173.71.175.175',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -147,3 +148,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Define the URL prefix for media files
 MEDIA_URL = '/media/'
+

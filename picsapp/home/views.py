@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse
 #from django.http import HttpResponse
-from .models import Profile, Post, Comment
+from .models import Profile, Post, Comment, find_dom_color
 #from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -12,6 +12,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView
 from datetime import date
 from django.contrib import messages
+from django.conf import settings
+import numpy as np
+import cv2
+import os
 
 @login_required(login_url='/login/')
 def index(request):
@@ -171,6 +175,9 @@ def edit_profile(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+            if 'profile_picture' in form.changed_data:
+                profile.pic_color = find_dom_color(profile.profile_picture.path)
+                profile.save(update_fields=['pic_color'])
             messages.success(request, 'Profile updated successfully!')
             return redirect(reverse('profile', args=[request.user.profile.pk]))
     else:
@@ -209,6 +216,51 @@ def delete_post(request, user_id, post_id):
         return redirect(reverse('profile', args=[user_id]))
     else:
         return redirect(reverse('index'))
+    
+# def unique_count_app(a):
+#     # Reshape the image array to a 2D array where each row is a color
+#     colors, count = np.unique(a.reshape(-1, a.shape[-1]), axis=0, return_counts=True)
+    
+#     # Create a mask to exclude black and white colors
+#     mask = (colors != [0, 0, 0]).all(axis=1) & (colors != [255, 255, 255]).all(axis=1)
+    
+#     # Apply the mask to colors and count arrays
+#     colors = colors[mask]
+#     count = count[mask]
+    
+#     # Find the most common color
+#     return colors[count.argmax()]
+
+
+# def find_dom_color(image_path):
+#     # Read image using OpenCV
+#     img = cv2.imread(image_path)
+    
+#     # Convert color space from BGR to RGB
+#     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#     dom_color = unique_count_app(img_rgb)
+    
+#     # Flatten the image to a 2D array of pixels
+#     #pixels = img_rgb.reshape(-1, 3)
+    
+#     # Convert to a list of tuples (R, G, B)
+#     #pixels = [tuple(pixel) for pixel in pixels]
+    
+#     # Count occurrences of each color
+#     # color_counts = {}
+#     # for pixel in pixels:
+#     #     if pixel in color_counts:
+#     #         color_counts[pixel] += 1
+#     #     else:
+#     #         color_counts[pixel] = 1
+    
+#     # Find the color with the maximum count
+#     #dom_color = max(color_counts, key=color_counts.get)
+
+#     hex_color = '#{:02x}{:02x}{:02x}'.format(dom_color[0], dom_color[1], dom_color[2])
+    
+#     return hex_color
+
 
 @login_required(login_url="/login/")
 def profile(request, user_id):
@@ -216,15 +268,19 @@ def profile(request, user_id):
     post_count = profile.posts.count()
     profile_posts = Post.objects.filter(author = profile).order_by('-created_on')
     is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
+    
+    # prof_pic_path = os.path.join(settings.MEDIA_ROOT, str(profile.profile_picture))
+    # pic_color = find_dom_color(prof_pic_path)
 
     context = {
         'profile': profile,
         'post_count': post_count,
         'profile_posts': profile_posts,
         'is_followed': is_followed,
+        'pic_color': profile.pic_color,
     }
 
-    return render(request, "home/profile.html", context)
+    return render(request, "home\\profile.html", context)
 
 @login_required(login_url="/login/")
 def results_profile(request, user_id):
@@ -243,7 +299,7 @@ def results_profile(request, user_id):
     return render(request, "home/results_profile.html", context)
 
 @login_required(login_url="/login/")
-def settings(request):
+def settings_page(request):
     return render(request, "home/settings.html")
 
 @login_required(login_url="/login/")
