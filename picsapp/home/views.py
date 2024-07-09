@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse
 #from django.http import HttpResponse
-from .models import Profile, Post, Comment, find_dom_color
-from django.db.models import Q
+from .models import Profile, Post, Comment, Notification, find_dom_color
+from django.db.models import Q, Max
 #from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -17,6 +17,7 @@ from django.conf import settings
 import numpy as np
 import cv2
 import os
+from django.utils import timezone
 
 @login_required(login_url='/login/')
 def index(request):
@@ -161,17 +162,6 @@ def follower_list(request, user_id):
 
     return render(request, "home/follower_list.html", {'profile': current_user_profile, 'followers': followers, 'following': following})
 
-# def toggle_login(request, pk):
-#     target_profile = get_object_or_404(Profile, pk)
-#     current_user = request.user.profile
-
-#     if current_user.follows.filter(pk=target_profile.pk).exists():
-#         current_user.follows.remove(target_profile)
-#     else:
-#         current_user.follows.add(target_profile)
-    
-#     return redirect('profile', pk=pk)
-
 @login_required(login_url="/login/")
 def edit_profile(request):
     profile = get_object_or_404(Profile, pk=request.user.profile.pk)
@@ -231,51 +221,6 @@ def delete_post(request, user_id, post_id):
     else:
         return redirect(reverse('index'))
     
-# def unique_count_app(a):
-#     # Reshape the image array to a 2D array where each row is a color
-#     colors, count = np.unique(a.reshape(-1, a.shape[-1]), axis=0, return_counts=True)
-    
-#     # Create a mask to exclude black and white colors
-#     mask = (colors != [0, 0, 0]).all(axis=1) & (colors != [255, 255, 255]).all(axis=1)
-    
-#     # Apply the mask to colors and count arrays
-#     colors = colors[mask]
-#     count = count[mask]
-    
-#     # Find the most common color
-#     return colors[count.argmax()]
-
-
-# def find_dom_color(image_path):
-#     # Read image using OpenCV
-#     img = cv2.imread(image_path)
-    
-#     # Convert color space from BGR to RGB
-#     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-#     dom_color = unique_count_app(img_rgb)
-    
-#     # Flatten the image to a 2D array of pixels
-#     #pixels = img_rgb.reshape(-1, 3)
-    
-#     # Convert to a list of tuples (R, G, B)
-#     #pixels = [tuple(pixel) for pixel in pixels]
-    
-#     # Count occurrences of each color
-#     # color_counts = {}
-#     # for pixel in pixels:
-#     #     if pixel in color_counts:
-#     #         color_counts[pixel] += 1
-#     #     else:
-#     #         color_counts[pixel] = 1
-    
-#     # Find the color with the maximum count
-#     #dom_color = max(color_counts, key=color_counts.get)
-
-#     hex_color = '#{:02x}{:02x}{:02x}'.format(dom_color[0], dom_color[1], dom_color[2])
-    
-#     return hex_color
-
-
 @login_required(login_url="/login/")
 def profile(request, user_id):
     profile = get_object_or_404(Profile, pk=user_id)
@@ -401,9 +346,16 @@ def like_post_index(request):
         if post.likes.filter(id=request.user.id).exists():
             post.likes.remove(request.user)
             liked = False
+            Notification.objects.filter(sender=request.user.profile, receiver=post.author, notification_type='like', post=post).delete()
         else:
             post.likes.add(request.user)
             liked = True
+            Notification.objects.create(
+                sender=request.user.profile,
+                receiver=post.author,
+                notification_type='like',
+                post=post
+            )
 
         total_likes = post.total_likes()
         return JsonResponse({'liked': liked, 'total_likes': total_likes})
@@ -441,9 +393,15 @@ def follow_user(request, user_id):
     if profile_to_follow in current_user.follows.all():
         current_user.follows.remove(profile_to_follow)
         follows = False
+        Notification.objects.filter(sender=request.user.profile, receiver=profile_to_follow, notification_type='follow').delete()
     else:
         current_user.follows.add(profile_to_follow)
         follows = True
+        Notification.objects.create(
+            sender=request.user.profile,
+            receiver= profile_to_follow,
+            notification_type='follow',
+        )
 
     redirect_url = reverse('profile', args=[user_id])
     return HttpResponseRedirect(redirect_url)
@@ -459,14 +417,47 @@ def follow_user_index(request):
         if profile_to_follow in current_user.follows.all():
             current_user.follows.remove(profile_to_follow)
             follows = False
+            Notification.objects.filter(sender=request.user.profile, receiver=profile_to_follow, notification_type='follow').delete()
         else:
             current_user.follows.add(profile_to_follow)
             follows = True
+            Notification.objects.create(
+                sender=request.user.profile,
+                receiver= profile_to_follow,
+                notification_type='follow',
+            )
         
         followers_count = profile_to_follow.followers_count()
 
         return JsonResponse({'follows': follows, 'followers_count': followers_count})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required(login_url="/login/")
+def notifications_page(request):
+    notifications = Notification.objects.filter(receiver=request.user.profile).order_by('-created_on')
+    today = timezone.localtime().date()
+
+    # for notification in notifications:
+    #     notification.sender_is_followed = request.user.profile.follows.filter(pk=notification.sender.pk).exists()
+    #     print(notification.sender_is_followed)
+
+    todays_notifs = notifications.filter(created_on__date=today)
+    earlier_notifs = notifications.exclude(created_on__date=today)
+
+    for notification in todays_notifs:
+        notification.sender_is_followed = request.user.profile.follows.filter(pk=notification.sender.pk).exists()
+
+    for notification in earlier_notifs:
+        notification.sender_is_followed = request.user.profile.follows.filter(pk=notification.sender.pk).exists()
+
+    notifications.update(is_read=True)
+    
+    context = {
+        'todays_notifs': todays_notifs,
+        'earlier_notifs': earlier_notifs,
+    }
+
+    return render(request, 'home/notifications.html', context)
 
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm

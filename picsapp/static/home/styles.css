@@ -43,7 +43,7 @@ nav:  #212121
   font-style: normal;
 }
 
-p, h1, h2, a {
+p, h1, h2, h3, a {
   font-family: "Rubik", sans-serif !important;
   font-optical-sizing: auto;
   font-weight: 400;
@@ -136,6 +136,10 @@ h4 {
   /* padding-top: 5px !important; */
   padding-bottom: 25px !important;
   padding-left: 150px !important; /* Default margin for small screens */
+}
+
+.notification-title {
+  text-align: left !important;
 }
 
 .profile-pic {

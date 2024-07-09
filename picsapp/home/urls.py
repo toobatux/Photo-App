@@ -31,5 +31,6 @@ urlpatterns = [
     path('explore/', views.explore, name="explore"),
     path('explore/results/', views.search, name="search"),
     path('explore/results/profile/<int:user_id>/', views.results_profile, name="results_profile"),
+    path('notifications/', views.notifications_page, name="notifications"),
    # path('accounts/profile/', views.profile, name='accounts_profile'),
 ]

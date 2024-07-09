@@ -74,6 +74,21 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
     
+class Notification(models.Model):
+    NOTIFICATION_TYPES = (
+        ('like', 'liked'),
+        ('follow', 'followed'),
+        ('comment', 'commented on'),
+    )
+
+    sender = models.ForeignKey(Profile, related_name='sent_notifications', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Profile, related_name='received_notifications', on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=10, choices=NOTIFICATION_TYPES, null=True, blank=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
 
 def is_black(color, threshold=55):
     r, g, b = color

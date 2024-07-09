@@ -42,7 +42,15 @@
         
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" style="background-color: #181818;">
             <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-clone pe-2" style="color: gray;"></i>Copy Profile Link</a></li>
-            {% if profile.user != user %}
+            {% if profile.user == user %}
+             <li><hr class="dropdown-divider" style="color: gray;"></li>
+            <li>
+              <form action="{% url 'logout' %}" method="post" class="ps-0 pe-0 w-100">
+                {% csrf_token %}
+                <button class="dropdown-item" type="submit" style="color: white;"><i class="fa-solid fa-arrow-right-from-bracket pe-2" style="color: gray;"></i>Log out</a>
+              </form>
+            </li>
+            {% else %}
             <form action="{% url 'follow_user' profile.pk %}" method="POST">
               {% csrf_token %} 
               {% if is_followed %}
@@ -163,12 +171,12 @@
         ><h5 class="mt-1 mb-1 rubik-bold">Edit Profile</h5></a
       >
     </div>
-    <div class="col-4 d-flex">
+    <div class="col-4 d-flex align-items-center">
       <a
         href="{% url 'settings' %}"
-        class="btn btn-secondary w-100"
-        style="border-radius: 15px;"
-        ><i class="fa-solid fa-gear fa-lg mt-3 mb-3"></i
+        class="btn btn-secondary w-100 d-flex align-items-center justify-content-center"
+        style="border-radius: 15px; height: 46px;"
+        ><i class="fa-solid fa-gear fa-lg"></i
       ></a>
     </div>
 
