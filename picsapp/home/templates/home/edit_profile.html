@@ -1,41 +1,60 @@
 {% extends "home/base.html" %} {% block content %}
 
-<div class="sticky-top" style="top: 72.5px;">
-<div class="container mt-5 mb-5">
-  <div class="row d-flex align-items-center background-color" style="height: 60px;">
-    <div class="col-auto">
-    <a href="{% url 'profile' user.profile.pk %}"
-      ><i
-        class="fa-solid fa-circle-chevron-left fa-2xl"
-        style="color: white"
-      ></i
-    ></a>
+<div class="sticky-top" style="top: 71px;">
+  <div class="container mt-5 mb-5">
+    <div class="row d-flex align-items-center body-background" style="height: 60px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
+      <div class="col-auto">
+        <a href="{% url 'profile' user.profile.pk %}"
+          ><i
+            class="fa-solid fa-circle-chevron-left fa-2xl"
+            style="color: white"
+          ></i
+        ></a>
+      </div>
+      <div class="col ps-0">
+        <h2 class="rubik-bold mb-0 text-center pe-5">Edit Profile</h2>
+      </div>
+    </div>
   </div>
-  </div>
-</div>
 </div>
 
-<div class="container d-flex justify-content-center" style="margin-top: 50px">
-  <div class="card post-background" style="width: 35rem; border-radius: 25px">
-    <div class="card-header text-center">
-      <h2><b>Edit Profile</b></h2>
-    </div>
+<div class="container d-flex justify-content-center">
+  <div class="card" style="width: 35rem; background-image: linear-gradient(to top, #101010, {{ user.profile.pic_color}}); border-radius: 25px">
     <div class="card-body">
-      <div class="row">
+      <div class="row mt-2 mb-2" style="z-index: 100">
         <div class="col-auto d-flex justify-content-center align-items-center">
+          {% if user.profile.profile_picture %}
           <img
-            class="rounded-circle"
-            style="height: 100px; width: 100px; object-fit: cover"
+            class="rounded-circle shadow-lg profile-pic"
             src="{{ user.profile.profile_picture.url }}"
             alt="Profile Picture"
           />
+          {% endif %}
         </div>
         <div class="col d-flex align-items-center me-1 ps-0">
-          <div class="container pe-0">
-            <h1 class="w-100 mt-2 rubik-bold text-wrap" style="word-wrap: break-word; word-break: break-word;">{{ user.username }}</h1>
+          <div class="container ps-2 pe-2">
+            <h1
+              class="w-100 mt-2 mb-0 rubik-bold text-wrap"
+              style="word-wrap: break-word; word-break: break-word"
+            >
+              {{ user.username }}
+            </h1>
+            {% if user.profile.name %}
+            <p
+              class="text-wrap mb-2"
+              style="white-space: normal; word-wrap: break-word; max-width: 210px;"
+            >
+              {{ user.profile.name }}
+            </p>
+            {% endif %} 
             {% if user.profile.bio %}
-            <p class="text-wrap" style="white-space: normal; word-wrap: break-word; max-width: 210px;">{{ user.profile.bio }}</p>
-            {% endif %}
+            <p
+              class="text-wrap mt-2"
+              style="white-space: normal; word-wrap: break-word; max-width: 210px"
+            >
+              {{ user.profile.bio }}
+            </p>
+            {% endif %} 
           </div>
         </div>
       </div>
@@ -43,7 +62,7 @@
   </div>
 </div>
 
-<div class="container d-flex justify-content-center" style="margin-top: 50px">
+<div class="container d-flex justify-content-center" style="margin-top: 20px">
   <div class="card post-background" style="width: 35rem; border-radius: 25px">
     <div class="card-body">
       <div
@@ -61,6 +80,7 @@
               type="file"
               name="profile_picture"
               accept="image/"
+              style="border-color: #101010;"
             />
           </div>
           <!-- {% if not is_default_pic %}
@@ -73,6 +93,18 @@
                     </div>
                   </div>
                   {% endif %} -->
+                  <div class="row mb-3">
+            <label for="id_name" class="form-label rubik-bold">Name</label>
+            <input
+              id="id_name"
+              class="form-control rubik-regular"
+              type="text"
+              name="name"
+              rows="1"
+              maxlength="20"
+              style="border-color: #101010;"
+            />
+          </div>
           <div class="row mb-3">
             <label for="id_bio" class="form-label rubik-bold">Bio</label>
             <input
@@ -82,6 +114,7 @@
               name="bio"
               rows="1"
               maxlength="50"
+              style="border-color: #101010;"
             />
           </div>
           <div class="row mt-5">

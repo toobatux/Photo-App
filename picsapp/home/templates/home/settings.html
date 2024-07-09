@@ -1,29 +1,39 @@
 {% extends 'home/base.html' %}
 {% block content %}
 
-<div class="container mt-5 mb-4">
-  <div class="row">
-    <div class="col-auto">
-      <a href="{% url 'profile' user.profile.pk %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
+<div class="sticky-top" style="top: 71px;">
+  <div class="container mt-5 mb-5">
+    <div class="row d-flex align-items-center body-background" style="height: 60px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
+      <div class="col-auto">
+        <a href="{% url 'profile' user.profile.pk %}"
+          ><i
+            class="fa-solid fa-circle-chevron-left fa-2xl"
+            style="color: white"
+          ></i
+        ></a>
+      </div>
+      <div class="col ps-0">
+        <h2 class="rubik-bold mb-0 text-center pe-5">Settings</h2>
+      </div>
     </div>
-  </div>
-  <div class="row d-flex justify-content-center align-items-center text-center"> 
-    <h2><b>Settings</b></h2>
   </div>
 </div>
 
 <div class="container d-flex justify-content-center mt-4 ps-5 pe-5">
     <div class="col-12 d-flex flex-column align-items-center" style="max-width: 35rem;">
         <div class="row w-100">
-            <a href="{% url 'liked_posts' %}" class="btn btn-outline-secondary w-100"><i class="fa-regular fa-heart"></i></a>  
+            <a href="{% url 'liked_posts' %}" class="btn btn-outline-secondary w-100" style="border-radius: 15px;">Liked Posts<i class="fa-regular fa-heart ps-2"></i></a>  
         </div>
         <div class="row w-100 mt-3">
-            <a href="{% url 'saved_posts' %}" class="btn btn-outline-secondary w-100"><i class="fa-regular fa-bookmark"></i></a>  
+            <a href="{% url 'saved_posts' %}" class="btn btn-outline-secondary w-100" style="border-radius: 15px;">Saved Posts<i class="fa-regular fa-bookmark ps-2"></i></a>  
         </div>
+        <div class="row w-100 mt-3">
+          <a href="#" class="btn btn-outline-secondary w-100" style="border-radius: 15px;">Blocked Users<i class="fa-regular fa-circle-xmark ps-2"></i></a>  
+      </div>
         <div class="row w-100 mt-5">
             <form action="{% url 'logout' %}" method="post" class="ps-0 pe-0 w-100">
                 {% csrf_token %}
-                <button class="btn btn-outline-danger w-100 rubik-bold" type="submit">
+                <button class="btn btn-outline-danger w-100 rubik-bold" type="submit" style="border-radius: 15px;">
                     Log Out
                 </button>
             </form>

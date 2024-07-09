@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse
 #from django.http import HttpResponse
 from .models import Profile, Post, Comment, find_dom_color
+from django.db.models import Q
 #from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -43,10 +44,14 @@ def index(request):
         post.comments_list = post.comments.all()
         post.total_comments = post.comments.count()
     
+
+    comment_form = CommentForm()
+
     context.update({
         'following_posts': following_posts,
         'not_following_posts': not_following_posts,
         'loading': False,
+        'comment_form': comment_form,
     })
     return render(request, "home/index.html", context)
 
@@ -111,7 +116,8 @@ def search(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
-            results = Profile.objects.filter(user__username__icontains = query)
+            #results = Profile.objects.filter(user__username__icontains = query)
+            results = Profile.objects.filter(Q(user__username__icontains=query) | Q(name__icontains=query))
     else:
         form = SearchForm()
 
@@ -193,8 +199,16 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user.profile
+        response = super().form_valid(form)
+
+        image_path = form.instance.image.path
+        dom_color = find_dom_color(image_path)
+
+        form.instance.pic_color = dom_color
+        form.instance.save()
+
         messages.success(self.request, 'Post created successfully!')
-        return super().form_valid(form)
+        return response
     
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
@@ -449,7 +463,9 @@ def follow_user_index(request):
             current_user.follows.add(profile_to_follow)
             follows = True
         
-        return JsonResponse({'follows': follows})
+        followers_count = profile_to_follow.followers_count()
+
+        return JsonResponse({'follows': follows, 'followers_count': followers_count})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 class SignUpView(generic.CreateView):

@@ -71,6 +71,10 @@ h4 {
   font-style: normal;
 }
 
+.app-title {
+  color: white;
+}
+
 .explore-post {
   width: 300px !important;
   height: 300px !important;
@@ -92,6 +96,16 @@ h4 {
 }
 .follower-container:hover {
   background-color: #303030; /* Background color when hovered */
+}
+
+.username-small {
+  color: white;
+  text-decoration: none;
+}
+
+.username-small:hover {
+  color: white;
+  text-decoration: underline;
 }
 
 .post-container {
@@ -119,7 +133,7 @@ h4 {
 }
 
 .profile-top {
-  padding-top: 25px !important;
+  /* padding-top: 5px !important; */
   padding-bottom: 25px !important;
   padding-left: 150px !important; /* Default margin for small screens */
 }
@@ -135,12 +149,16 @@ h4 {
 }
 
 .no-posts {
-  margin-top: 200px !important;
+  margin-top: 50px !important;
 }
 
 @media (max-width: 768px) {
+  .app-title {
+    display: none !important;
+  }
+
   .profile-top {
-    padding-left: 10px !important; /* Margin for screens wider than 768px */
+    padding-left: 20px !important; /* Margin for screens wider than 768px */
   }
 
   .profile-bottom {
@@ -157,15 +175,49 @@ h4 {
   }
 
   .profile-pic {
-    width: 120px;
-    height: 120px;
+    width: 90px;
+    height: 90px;
     object-fit: cover;
   }
 
   .no-posts {
-    margin-top: 90px !important;
+    margin-top: 50px !important;
   }
 }
+
+@media (max-width: 768px) {
+  .app-title {
+    display: none !important;
+  }
+
+  .profile-top {
+    padding-left: 20px !important; /* Margin for screens wider than 768px */
+  }
+
+  .profile-bottom {
+    padding-left: 30px !important; /* Margin for screens wider than 768px */
+  }
+
+  .like-bar {
+    margin-left: 0px !important;
+  }
+
+  .explore-post {
+    width: 400px !important;
+    height: 200px !important;
+  }
+
+  .profile-pic {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+  }
+
+  .no-posts {
+    margin-top: 50px !important;
+  }
+}
+
 
 @media (max-width: 450px) {
   .profile-edit-btn {

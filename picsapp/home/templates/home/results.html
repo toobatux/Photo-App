@@ -1,22 +1,36 @@
 {% extends 'home/base.html' %} {% block content %}
 
-<div class="container mt-5 mb-4">
-  <div class="row">
-    <div class="col-auto">
-      <a href="{% url 'explore' %}"
-        ><i
-          class="fa-solid fa-circle-chevron-left fa-2xl"
-          style="color: white"
-        ></i
-      ></a>
+<div class="sticky-top" style="top: 71px;">
+  <div class="container mt-1 mb-1 body-background">
+    <div class="row d-flex align-items-center" style="height: 60px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
+      <div class="col-auto">
+        <a href="{% url 'explore' %}"
+          ><i
+            class="fa-solid fa-circle-chevron-left fa-2xl"
+            style="color: white"
+          ></i
+        ></a>
+      </div>
     </div>
-  </div>
-  <div class="row d-flex justify-content-center align-items-center text-center">
-    {% if query %}
-    <h2><b>Results for "{{ query }}"</b></h2>
-    {% else %}
-    <h2><b>Results</b></h2>
-    {% endif %}
+    <div class="row">
+      <div class="col ps-0">
+        <h2 class="rubik-bold mb-0 text-center pb-2">Results for "{{ query }}"</h2>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-center align-items-center mt-2 pb-3">
+      <form
+        method="get"
+        action="{% url 'search' %}"
+        class="d-flex"
+        role="search"
+        style="width: 27rem;"
+      >
+      <div class="input-group">
+        <input id="id_query" type="text" name="query" class="form-control rubik-bold me-2" placeholder="Find your friends" aria-label="Search" maxlength="15" required="" style="border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+        <button class="btn btn-primary rubik-bold" type="submit" style="width: 6rem; border-top-right-radius: 20px; border-bottom-right-radius: 20px;"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -25,73 +39,45 @@
     <button type="submit">Search</button>
 </form> -->
 
-<div class="row d-flex justify-content-center align-items-center mt-4">
-  <form
-    method="get"
-    action="{% url 'search' %}"
-    class="d-flex"
-    role="search"
-    style="width: 27rem"
-  >
-    <input
-      id="id_query"
-      type="text"
-      name="query"
-      class="form-control me-2 rubik-bold"
-      placeholder="Find your friends"
-      aria-label="Search"
-      maxlength="50"
-      required=""
-    />
-    <button class="btn btn-outline-secondary rubik-bold" type="submit">
-      <b>Search</b>
-    </button>
-  </form>
-</div>
-
 {% if query %}
-<div class="container d-flex justify-content-center">
-<div class="row d-flex justify-content-center mt-5" style="max-width: 27rem">
-  {% for profile in results %}
-  <a href="{% url 'results_profile' profile.pk %}" class="ps-0 pe-0 mt-2" style="color: lightgray; text-decoration: none">
-    <div class="search-result">
-    <div class="row w-100 d-flex align-items-center">
-        <div class="col-auto ps-4">
-          <img
-            class="rounded-circle"
-            style="height: 50px; width: 50px; object-fit: cover"
-            src="{{ profile.profile_picture.url }}"
-            alt="Profile Picture"
-          />
-        </div>
-        <div class="col-auto ps-0">
-          <div>
-            <b>{{ profile.user.username }}</b>
-          </div>
-        </div>
-        {% if profile != user.profile %}
-        <div class="col-auto d-flex ms-auto pe-0">
-          <form id="followForm{{ profile.pk }}" onsubmit="event.preventDefault(); followUser('{{ profile.pk }}')">
-              {% csrf_token %}
-              <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}">
-                {% if profile.is_followed %}
-                  <b class="rubik-bold">Following</b>
-                {% else %}
-                  <b class="rubik-bold">Follow</b>
+<div class="container mt-3 ps-0 pe-0" style="max-width: 27rem; max-height: 450px; overflow-y: auto">
+      {% for profile in results %}
+        <a href="{% url 'results_profile' profile.pk %}" style="color: lightgray; text-decoration: none">
+          <div class="search-result">
+            <div class="row w-100 d-flex align-items-center">
+              <div class="col-auto ps-4">
+                <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover" src="{{ profile.profile_picture.url }}" alt="Profile Picture" />
+              </div>
+              <div class="col-auto ps-0">
+                <div>
+                  <b>{{ profile.user.username }}</b>
+                </div>
+                {% if profile.name %}
+                <div>
+                  <p class="mb-0" style="color: gray;">{{ profile.name }}</p>
+                </div>
                 {% endif %}
-              </button>
-          </form>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </a>
-  {% empty %}
-  <div class="row pt-5">
-    <h3 class="text-center"><b>No users found</b></h3>
-  </div>
-  {% endfor %}
-</div>
+              </div>
+              {% if profile != user.profile %}
+                <div class="col-auto d-flex ms-auto pe-0">
+                  <form id="followForm{{ profile.pk }}" onsubmit="event.preventDefault(); followUser('{{ profile.pk }}')">
+                    {% csrf_token %}
+                    <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}" style="border-radius: 15px;">
+                      {% if profile.is_followed %}
+                        <b class="rubik-bold">Following</b>
+                      {% else %}
+                        <b class="rubik-bold">Follow</b>
+                      {% endif %}
+                    </button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+        {% empty %}
+        <h4 class="text-center mt-5"><b>No users found</b></h4>
+      {% endfor %}
 </div>
 {% endif %}
 

@@ -28,7 +28,7 @@
     {% if following_posts %}
     {% for post in following_posts %}
     <div class="row d-flex align-items-center justify-content-center mb-3">
-        <div class="card ps-0 pe-0 post-background" style="width: 50rem; border-radius: 25px;">
+        <div class="card ps-0 pe-0 post-background" style="width: 50rem; border-radius: 15px;">
             <div class="card-header pt-2 pb-2">
                 <div class="row d-flex align-items-center">
                     <div class="col-auto">
@@ -42,7 +42,7 @@
                         </a>
                     </div>
                     <div class="col ms-0 ps-0">
-                        <a href="{% url 'profile' post.author.pk %}" style="color: #f1f1f1; text-decoration: none;"><b>{{ post.author }}</b></a>
+                        <a href="{% url 'profile' post.author.pk %}" class="username-small"><b>{{ post.author }}</b></a>
                     </div>
                 </div>
             </div>
@@ -66,6 +66,7 @@
                     </div>
                     <div class="col">
                         <a href="{% url 'post_detail' post.author.pk post.pk %}"><i class="fa-regular fa-comment fa-xl" style="color: white;"></i></a>
+                        <i class="fa-regular fa-comment fa-xl" id="{{ post.id }}" data-bs-toggle="modal" data-bs-target="#commentsModal{{ post.id }}" style="color: white;"></i>
                     </div>
                     <div class="col d-flex align-items-center">
                         <form id="saveForm{{ post.id }}" onsubmit="event.preventDefault(); savePost('{{ post.id }}')" class="d-flex float-end ms-auto">
@@ -96,7 +97,7 @@
                 </div>
                 <div class="row">
                     {% if post.caption %}
-                        <a href="{% url 'profile' post.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-1 mb-1"><b>{{ post.author }}</b></a> {{ post.caption }}</p>
+                        <a href="{% url 'profile' post.author.pk %}" class="username-small"><p class="card-text mt-1 mb-1"><b>{{ post.author }}</b></a> {{ post.caption }}</p>
                     {% endif %}
                     {% if post.comments_list %}
                         {% if post.total_comments > 2 %}
@@ -105,8 +106,22 @@
                             <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-1" style="color: gray;">View all comments</p></a>
                         {% endif %}
                         {% for comment in post.comments_list|slice:":2" %}
-                            <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-0 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
+                            <a href="{% url 'profile' comment.author.pk %}" class="username-small"><p class="card-text mt-0 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
                         {% endfor %}
+                    {% else %}
+                    <div class="row d-flex align-items-center mt-2 mb-1">
+                        <div class="col-auto d-flex align-items-center">
+                            <img
+                            class="rounded-circle"
+                            style="height: 20px; width: 20px;  object-fit: cover;"
+                            src="{{ user.profile.profile_picture.url }}"
+                            alt="User Comment Profile Picture"
+                            />
+                        </div>
+                        <div class="col ms-0 ps-0">
+                            <p class="mb-0" id="{{ post.id }}" data-bs-toggle="modal" data-bs-target="#commentsModal{{ post.id }}" style="color: gray;">Add a comment</p>
+                        </div>
+                    </div>
                     {% endif %}
                 </div>
                 <div class="row d-flex align-items-center mt-1">
@@ -115,32 +130,16 @@
             </div>
         </div>
     </div>
-        <!-- Modal -->
+        <!-- Likes Modal -->
         <div class="modal" id="likesModal{{ post.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-              <div class="modal-content" style="background-color: #101010; color: white; max-height:500px;">
+              <div class="modal-content" style="background-color: #101010; color: white; max-height:500px; border-radius: 15px;">
                 <div class="modal-header" style="border: none;">
-                  <h1 class="modal-title fs-5 ms-auto" id="exampleModalLabel"><b>Likes</b></h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                  <h1 class="modal-title fs-5 ms-3" id="exampleModalLabel"><b>Likes</b></h1>
+                  <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
                 </div>
                 <div class="modal-body">
                     {% for user in post.liked_users %}
-                    <!-- <div class="row d-flex align-items-center mb-4 ms-1">
-                        <div class="col-auto">
-                            <a href="{% url 'profile' user.profile.pk %}">
-                            <img class="rounded-circle" 
-                            style="height: 50px; width: 50px; object-fit: cover;"
-                            src="{{ user.profile.profile_picture.url }}"
-                            alt="Profile Picture"
-                            />
-                            </a>
-                        </div>
-                        <div class="col-8">
-                            <div>
-                                <a href="{% url 'profile' user.profile.pk %}" style="color: #f1f1f1; text-decoration: none;"><b>{{ user.username }}</b></a>
-                            </div>
-                        </div>
-                    </div> -->
                     <a href="{% url 'profile' user.profile.pk %}" style="color: lightgray; text-decoration: none">
                         <div class="search-result">
                             <div class="row w-100 d-flex align-items-center">
@@ -154,7 +153,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <div>
-                                        <b>{{ user.username }}</b>
+                                        <b class="username-small">{{ user.username }}</b>
                                     </div>
                                 </div>
                             </div>
@@ -164,6 +163,71 @@
                 </div>
                 <div class="modal-footer" style="border: none;">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><b>Close</b></button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- Comments Modal -->
+        <div class="modal" id="commentsModal{{ post.id }}" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+              <div class="modal-content" style="background-color: #101010; color: white; max-height:500px; border-radius: 15px;">
+                <div class="modal-header" style="border: none;">
+                  <h1 class="modal-title fs-5 ms-3" id="commentsModalLabel"><b>Comments</b></h1>
+                  <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                <div class="modal-body">
+                    {% if post.caption %}
+                        <div class="row mt-0 ms-3 me-3 d-flex">
+                            <div class="col-auto ps-0">
+                            <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" src="{{ post.author.profile_picture.url }}" alt="Author Profile Picture"/>
+                            </div>
+                        <div class="col ps-0 pe-0" style="max-width: 300px;">
+                        <a href="{% url 'profile' post.author.pk %}" class="username-small"><b>{{ post.author }}</b></a>
+                        <p>{{ post.caption }}</p>
+                        </div>
+                        <hr/>
+                        </div>
+                    {% endif %}
+                    {% for comment in post.comments_list %}
+                        <div class="row ms-3 me-3 mt-3 mb-3 d-flex" style="height: 60px">
+                            <div class="col-auto ps-0">
+                                <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" src="{{ comment.author.profile.profile_picture.url }}" alt="Comment Author Profile Picture"/>
+                            </div>
+                            <div class="col ps-0 pe-0" style="max-width: 300px;">
+                                <a href="{% url 'profile' comment.author.pk %}" class="username-small"><b>{{ comment.author.username }}</b></a>
+                                <p>{{ comment.text }}</p>
+                            </div>
+                            {% if user == comment.author or user == post.author.user %}
+                            <div class="col-auto">
+                                <form action="{% url 'delete_comment' post.author.pk post.pk comment.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm mt-2"><i class="fa-solid fa-trash" style="color:white;"></i></button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="row text-center mt-5 mb-5">
+                            <h5 class="rubik-bold">No comments yet.</h5>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer" style="border: none;">
+                  <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><b>Close</b></button> -->
+                  <div class="row w-100 mt-4 ms-3 me-3">
+                    <form method="post" id="commentForm-{{ post.id }}">
+                      {% csrf_token %}
+                      <div class="row mb-3">
+                        <div class="col-9 ps-2 pe-0">
+                          <input id="id_text" class="form-control" type="text" name="text" rows="1" placeholder="Leave a Comment" required="">
+                        </div>
+                        <div class="col-3 ps-1 pe-2">
+                          <button class="btn btn-outline-primary w-100" type="submit"><i class="fa-solid fa-arrow-up"></i></button>
+                        </div>
+                      </div>
+                    </form>
+                    </div>
                 </div>
               </div>
             </div>
@@ -200,12 +264,12 @@
                         </a>
                     </div>
                     <div class="col ms-0 ps-0">
-                        <a href="{% url 'profile' post.author.pk %}" class="rubik-bold" style="color: lightgray; text-decoration: none;">{{ post.author }}</a>
+                        <a href="{% url 'profile' post.author.pk %}" class="rubik-bold username-small">{{ post.author }}</a>
                     </div>
                     <div class="col-auto">
                         <form id="followForm{{ post.author.pk }}" onsubmit="event.preventDefault(); followUser('{{ post.author.pk }}')">
                             {% csrf_token %}
-                            <button type="submit" id="followBtn_{{ post.author.pk }}" class="btn btn-outline-secondary follow-btn user-{{ post.author.pk }}">
+                            <button type="submit" id="followBtn_{{ post.author.pk }}" class="btn btn-outline-secondary follow-btn user-{{ post.author.pk }}" style="border-radius: 15px;">
                                 <b class="rubik-bold">Follow</b>
                             </button>
                         </form>
@@ -264,16 +328,16 @@
                 </div>
                 <div class="row">
                     {% if post.caption %}
-                        <a href="{% url 'profile' post.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-1 mb-1"><b>{{ post.author }}</b></a> {{ post.caption }}</p>
+                        <a href="{% url 'profile' post.author.pk %}" class="username-small"><p class="card-text mt-1 mb-1"><b>{{ post.author }}</b></a> {{ post.caption }}</p>
                     {% endif %}
                     {% if post.comments_list %}
                         {% if post.total_comments > 2 %}
-                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:darkgray; text-decoration: none;"><p class="mb-0">View all {{ post.total_comments }} comments</p></a>
+                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:gray; text-decoration: none;"><p class="mb-0" style="color: gray;">View all {{ post.total_comments }} comments</p></a>
                         {% else %}
-                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color:darkgray; text-decoration: none;"><p class="mb-0">View all comments</p></a>
+                            <a href="{% url 'post_detail' post.author.pk post.pk %}" style="color: gray; text-decoration: none;"><p class="mb-0" style="color: gray;">View all comments</p></a>
                         {% endif %}
                         {% for comment in post.comments_list|slice:":2" %}
-                            <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><p class="card-text mt-1 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
+                            <a href="{% url 'profile' comment.author.pk %}" class="username-small"><p class="card-text mt-1 mb-0"><b>{{ comment.author }}</b></a> {{ comment.text }}</p>
                         {% endfor %}
                     {% endif %}
                 </div>

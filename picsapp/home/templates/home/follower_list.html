@@ -62,12 +62,17 @@
                       <div>
                         <b>{{ profile.user.username }}</b>
                       </div>
+                      {% if profile.name %}
+                      <div>
+                        <p class="mb-0" style="color: gray;">{{ profile.name }}</p>
+                      </div>
+                      {% endif %}
                     </div>
                     {% if profile != user.profile %}
                       <div class="col-auto d-flex ms-auto pe-0">
                         <form id="followForm{{ profile.pk }}" onsubmit="event.preventDefault(); followUser('{{ profile.pk }}')">
                           {% csrf_token %}
-                          <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}">
+                          <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}" style="border-radius: 15px;">
                             {% if profile.is_followed %}
                               <b class="rubik-bold">Following</b>
                             {% else %}
@@ -106,12 +111,17 @@
                       <div>
                         <b>{{ profile.user.username }}</b>
                       </div>
+                      {% if profile.name %}
+                      <div>
+                        <p class="mb-0" style="color: gray;">{{ profile.name }}</p>
+                      </div>
+                      {% endif %}
                     </div>
                     {% if profile != user.profile %}
                       <div class="col-auto d-flex ms-auto pe-0">
                         <form id="followForm{{ profile.pk }}" onsubmit="event.preventDefault(); followUser('{{ profile.pk }}')">
                           {% csrf_token %}
-                          <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}">
+                          <button type="submit" id="followBtn_{{ profile.pk }}" class="btn btn-outline-primary follow-btn user-{{ profile.pk }}" style="border-radius: 15px;">
                             {% if profile.is_followed %}
                               <b class="rubik-bold">Following</b>
                             {% else %}

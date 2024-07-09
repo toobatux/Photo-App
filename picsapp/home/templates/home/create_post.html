@@ -4,7 +4,7 @@
 
 <div class="sticky-top" style="top: 71px;">
   <div class="container mt-5 mb-5">
-    <div class="row d-flex align-items-center body-background" style="height: 60px;">
+    <div class="row d-flex align-items-center body-background" style="height: 60px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
       <div class="col-auto">
         <a href="{% url 'profile' user.profile.pk %}"
           ><i
@@ -13,17 +13,20 @@
           ></i
         ></a>
       </div>
+      <div class="col ps-0">
+        <h2 class="rubik-bold mb-0 text-center pe-5">New Post</h2>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="container d-flex justify-content-center" style="margin-top: 50px;">
   <div class="card post-background" style="width: 35rem; border-radius: 25px;">
-      <div class="card-header text-center">
+      <!-- <div class="card-header text-center">
           <h2 class="pt-2 pb-1 rubik-regular"><b>New Post</b></h2>
-      </div>
+      </div> -->
       <div class="card-body">
-          <div class="container ps-5 pe-5 d-flex justify-content-center align-items-center">
+          <div class="container mt-4 ps-5 pe-5 d-flex justify-content-center align-items-center">
               <form method="post" enctype="multipart/form-data">
                   {% csrf_token %} 
                   <div class="row mb-3">
