@@ -31,16 +31,14 @@
                             {% csrf_token %} 
                             <div class="row mb-3">
                               <label for="id_username" class="form-label rubik-bold">USERNAME</label>
-                              <input class="form-control" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="12" required=""
-                              style="background-color: lightgray;">
+                              <input class="form-control input-field" id="id_username" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="12" required="">
                             </div>
                             <div class="row mb-3">
                               <label for="id_password" class="form-label rubik-bold">PASSWORD</label>
-                              <input id="id_password" class="form-control" type="password" name="password" autocomplete="current-password" required=""
-                              style="background-color: lightgray;">
+                              <input id="id_password" class="form-control input-field" type="password" name="password" autocomplete="current-password" required="">
                             </div>
                             <div class="row mt-5 mb-3">
-                                <button class="btn btn-primary rubik-bold" type="submit">Log in</button>
+                                <button class="btn btn-primary rubik-bold" type="submit" style="border-radius: 15px;">Log in</button>
                             </div>
                         </form>
                     </div>

@@ -1,195 +1,413 @@
 {% extends 'home/base.html' %} {% block content %}
 
-<div class="container mt-5 mb-4">
-    <div class="row">
-      <div class="col-auto">
-        <a href="{% url 'search' %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
-      </div>
-    </div>
-</div>
-
+<!-- MESSAGE PROMPT -->
 {% if messages %}
-<div class="sticky-top" style="top: 90px;">
-<div class="container ps-0 pe-0 ms-0">
+<div class="sticky-top" style="top: 90px">
+  <div class="container ps-0 pe-0 ms-0">
     <div class="messages">
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
-                <b class="rubik-bold">{{ message }}</b>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-         </div>
-        {% endfor %}
+      {% for message in messages %}
+      <div
+        class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+        role="alert"
+      >
+        <b class="rubik-bold">{{ message }}</b>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endfor %}
     </div>
-</div>
+  </div>
 </div>
 {% endif %}
 
-<div class="container ps-0 pe-0">
-  <div class="row profile-top" id="profileSection">
+<!-- PROFILE BODY -->
+<div class="container ps-0 pe-0" style="min-height: 100vh;">
+
+  <!-- PROFILE TOP SECTION -->
+  <div id="profileSection">
+  <div
+    style="background-image: linear-gradient(to top, #101010, {{pic_color}}); border-radius: 15px;"
+  >
+    <!-- DOT MENU -->
+    <div class="row w-100 pt-3 pb-4">
+      <div class="col-auto ms-3">
+        <a href="{% url 'search' %}"><i class="fa-solid fa-circle-chevron-left fa-2xl" style="color:white;"></i></a>
+      </div>
+      <div class="col-auto ms-auto pe-0">
+        <div class="dropdown">
+          <a class="btn btn-secondary pt-0 pb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+            <i class="fa-solid fa-ellipsis fa-lg"></i>
+          </a>
+        
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" style="background-color: #181818;">
+            {% if profile.user == user %}
+            <li><a class="dropdown-item" href="{% url 'edit_profile' %}" style="color: white;"><i class="fa-regular fa-pen-to-square pe-2" style="color: gray;"></i>Edit Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'settings' %}" style="color: white;"><i class="fa-solid fa-gear pe-2" style="color: gray;"></i>Settings</a></li>
+            <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-clone pe-2" style="color: gray;"></i>Copy Profile Link</a></li>
+             <li><hr class="dropdown-divider" style="color: gray;"></li>
+            <li>
+              <form action="{% url 'logout' %}" method="post" class="ps-0 pe-0 w-100">
+                {% csrf_token %}
+                <button class="dropdown-item" type="submit" style="color: white;"><i class="fa-solid fa-arrow-right-from-bracket pe-2" style="color: gray;"></i>Log out</a>
+              </form>
+            </li>
+            {% else %}
+            <form action="{% url 'follow_user' profile.pk %}" method="POST">
+              {% csrf_token %} 
+              {% if is_followed %}
+              <li><button type="submit" class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-square-minus pe-2" style="color: gray;"></i>Unfollow</button></li>
+              {% else %}
+              <li><button type="submit" class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-square-plus pe-2" style="color: gray;"></i>Follow</button></li>
+              {% endif %}
+            </form>
+            <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-clone pe-2" style="color: gray;"></i>Copy Profile Link</a></li>
+            <li><hr class="dropdown-divider" style="color: gray;"></li>
+            <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-circle-xmark pe-2" style="color: gray;"></i>Block</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row profile-top" style="z-index: 100">
       <div class="col-auto d-flex justify-content-center align-items-center">
         {% if profile.profile_picture %}
         <img
-          class="rounded-circle"
-          style="height: 120px; width: 120px;  object-fit: cover;"
+          class="rounded-circle profile-pic shadow-lg"
           src="{{ profile.profile_picture.url }}"
           alt="Profile Picture"
         />
         {% endif %}
       </div>
-    <div class="col d-flex align-items-center me-1 ps-0">
-      <div class="container pe-0">
-        <h1 class="w-100 mt-2 rubik-bold text-wrap" style="word-wrap: break-word; word-break: break-word;">{{ profile.user.username }}</h1>
-        {% if profile.bio %}
-        <p class="text-wrap" style="white-space: normal; word-wrap: break-word; max-width: 210px;">{{ profile.bio }}</p>
+      <div class="col d-flex align-items-center me-1 ps-0">
+        <div class="container ps-2 pe-2">
+          <h1
+            class="w-100 mt-2 mb-0 rubik-bold text-wrap"
+            style="word-wrap: break-word; word-break: break-word"
+          >
+            {{ profile.user.username }}
+          </h1>
+          {% if profile.name %}
+          <p
+            class="text-wrap mb-2"
+            style="white-space: normal; word-wrap: break-word; max-width: 210px; color: gray"
+          >
+            {{ profile.name }}
+          </p>
+          {% endif %} 
+          {% if profile.bio %}
+          <p
+            class="text-wrap mt-2"
+            style="white-space: normal; word-wrap: break-word; max-width: 210px"
+          >
+            {{ profile.bio }}
+          </p>
+          {% endif %} 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTS / FOLLOWERS / FOLLOWING SECTION -->
+  <div class="container ps-0 pe-0 mb-4">
+    <hr class="mb-1" />
+
+    <div
+      class="row d-flex justify-content-center align-items-center text-center"
+    >
+      <div class="col-auto me-4">
+        <div><h4 style="color: white">{{ post_count }}</h4></div>
+        {% if post_count == 1 %}
+        <div>
+          <p style="color: lightgray; margin: 0px; padding: 0px">Post</p>
+        </div>
+        {% else %}
+        <div>
+          <p style="color: lightgray; margin: 0px; padding: 0px">Posts</p>
+        </div>
         {% endif %}
+      </div>
+      <div class="col-auto pe-0">
+        <a
+          href="{% url 'follower_list' profile.pk %}"
+          style="color: white; text-decoration: none"
+        >
+          <div
+            class="follower-container d-flex align-items-center justify-content-center"
+          >
+            <div class="d-flex flex-column align-items-center">
+              <div><h4 id="followersCount">{{ profile.followers_count }}</h4></div>
+              <div><p style="margin: 0px; padding: 0px">Followers</p></div>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-auto pe-0">
+        <a
+          href="{% url 'following_list' profile.pk %}"
+          style="color: white; text-decoration: none"
+        >
+          <div
+            class="follower-container d-flex align-items-center justify-content-center"
+          >
+            <div class="d-flex flex-column align-items-center">
+              <div><h4>{{ profile.following_count }}</h4></div>
+              <div><p style="margin: 0px; padding: 0px">Following</p></div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <hr class="mt-1" />
+  </div>
+
+
+  <!-- EDIT/SETTINGS SECTION -->
+  <div class="row d-flex align-items-center pb-4">
+    {% if profile.user == user %}
+    <div class="col-8 d-flex pe-1 ms-auto">
+      <a
+        href="{% url 'edit_profile' %}"
+        class="btn w-100 prof-button"
+        style="border-radius: 15px;"
+        ><h6 class="mt-1 mb-1 rubik-bold">Edit Profile</h6></a
+      >
+    </div>
+    <div class="col-4 d-flex align-items-center">
+      <a
+        href="{% url 'settings' %}"
+        class="btn w-100 d-flex align-items-center justify-content-center prof-button"
+        style="border-radius: 15px;  height: 41px;"
+        ><i class="fa-solid fa-gear"></i
+      ></a>
+    </div>
+
+    <!-- FOLLOW / FOLLOWING BUTTON SECTION -->
+    {% else %}
+    <form id="followForm{{ profile.pk }}" onsubmit="event.preventDefault(); followUser('{{ profile.pk }}')">
+      {% csrf_token %} 
+      {% if is_followed %}
+      <div class="col d-flex">
+        <button
+          type="submit"
+          id="followBtn_{{ profile.pk }}"
+          class="btn prof-button rubik-bold w-100 user-{{ profile.pk }}"
+          style="border-radius: 15px;"
+        >
+          <h6 class="mt-1 mb-1 rubik-bold">Following</h6>
+        </button>
+      </div>
+      {% else %}
+      <div class="col d-flex">
+        <button
+          type="submit"
+          id="followBtn_{{ profile.pk }}"
+          class="btn btn-primary rubik-bold w-100 user-{{ profile.pk }}"
+          style="border-radius: 15px;"
+        >
+          <h6 class="mt-1 mb-1 rubik-bold">Follow</h6>
+        </button>
+      </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+  <!-- POSTS SECTION -->
+  <div class="row mb-3">
+    {% if profile_posts %} {% for post in profile_posts %}
+    <div
+      class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center"
+    >
+      <a href="{% url 'post_detail' post.author.pk post.pk %}">
+        <div class="post-container">
+          <div class="post-card">
+            <img
+              class="img-fluid shadow-lg explore-post"
+              src="{{ post.image.url }}"
+              alt="Post Image"
+              style="border-radius: 25px; object-fit: cover"
+            />
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %} {% else %}
+    <div
+      class="container d-flex justify-content-center align-items-center no-posts"
+    >
+      <div class="row">
+        <div class="col text-center">
+          <i class="fa-solid fa-camera fa-2xl mb-4" style="color: gray"></i>
+          <h3 class="rubik-bold" style="color: gray">No Posts</h3>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+
+  <!-- STICKY PROFILE HEADER -->
+  <div
+    id="stickyHeader"
+    class="sticky-top d-none profile-sticky-header"
+    style="top: -65px; position: fixed; z-index: 105; width: 100%; margin-left: -12px;"
+  >
+    <div
+      class="container d-flex justify-content-center align-items-center ms-0"
+      style="
+        width: 100vw;
+        height: 65px;
+        background-color: {{ pic_color }};
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        overflow: hidden;
+      "
+    >
+      <div
+        id="profileTop"
+        class="row w-100 pe-3 pt-0 pb-0 d-flex align-items-center"
+      >
+        <div class="col-auto">
+          <img
+            class="rounded-circle shadow-lg"
+            style="height: 40px; width: 40px; object-fit: cover"
+            src="{{ profile.profile_picture.url }}"
+            alt="Profile Picture"
+          />
+        </div>
+        <div class="col-auto ps-0">
+          <a
+            id="scrolltoTopBtn"
+            class="username-small"
+            href="#"
+            style="
+              word-wrap: break-word;
+              word-break: break-word;
+            "
+            ><b class="rubik-bold">{{ profile.user.username }}</b></a
+          >
+        </div>
         {% if profile.user == user %}
-        <div class="row">
-          <div class="col-auto pt-1 pe-0 mb-1">
-            <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary" style="width: 7.5rem;"><b>Edit Profile</b></a>
-          </div>
-          <div class="col-auto pt-1 pe-0 me-0">
-            <a href="{% url 'settings' %}" class="btn btn-outline-secondary" style="width: 3rem;"><i class="fa-solid fa-gear"></i></a>  
-            <!-- <br/> -->
-          </div>
+        <div class="col-auto d-flex float-end pe-0 ms-auto">
+          <a
+            href="{% url 'edit_profile' %}"
+            class="btn prof-button profile-edit-btn shadow-lg"
+            style="border-radius: 15px;"
+            ><b>Edit Profile</b></a
+          >
+        </div>
+        <div class="col-auto d-flex float-end pe-0">
+          <a
+            href="{% url 'settings' %}"
+            class="btn prof-button shadow-lg"
+            style="width: 4rem; border-radius: 15px;"
+            ><i class="fa-solid fa-gear"></i
+          ></a>
+        </div>
+        {% else %}
+        <div class="col-auto d-flex float-end pe-0 ms-auto">
+        <form action="{% url 'follow_user' profile.pk %}" method="POST">
+          {% csrf_token %} 
+          {% if is_followed %}
+            <button
+              type="submit"
+              class="btn btn-secondary rubik-bold"
+              style="border-radius: 15px;"
+            >
+              <b>Following</b>
+            </button>
+          {% else %}
+            <button
+              type="submit"
+              class="btn btn-primary rubik-bold"
+              style="border-radius: 15px;"
+            >
+              <b>Follow</b>
+            </button>
+          {% endif %}
         </div>
         {% endif %}
       </div>
     </div>
   </div>
-</div>
-
-<div id="stickyHeader" class="sticky-top d-none profile-sticky-header" style="top: -65px; position: fixed; z-index: 1000; transition: top 0.1s ease-in-out;">
-  <div class="container d-flex justify-content-center align-items-center ps-0 body-background" style="width:100vw; height: 65px;">
-    <div id="profileTop" class="row w-100 pe-3 pt-0 pb-0 d-flex align-items-center">
-      <div class="col-auto">
-        <img
-          class="rounded-circle"
-          style="height: 40px; width: 40px;  object-fit: cover;"
-          src="{{ profile.profile_picture.url }}"
-          alt="Profile Picture"
-        />
-      </div>
-      <div class="col-auto me-auto">
-        <a href="" style="color: white; text-decoration: none;"><b class="rubik-bold">{{ profile.user.username }}</b></a>
-      </div>
-      {% if profile.user == user %}
-      <div class="col-auto d-flex float-end pe-0">
-        <a href="{% url 'settings' %}" class="btn btn-outline-secondary" style="width: 3rem;"><i class="fa-solid fa-gear"></i></a>  
-      </div>
-      {% endif %}
-    </div>
-  </div>
-</div>
 
 
-<div class="container ps-0 pe-0 mb-5">
-<hr/>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<div class="row d-flex justify-content-center align-items-center text-center">
-  <div class="col-auto me-5">
-    <div><h4 style="color: white;">{{ post_count }}</h4></div>
-    {% if post_count == 1 %}
-    <div><p style="color: lightgray; margin:0px; padding:0px;">Post</p></div>
-    {% else %}
-    <div><p style="color: lightgray; margin:0px; padding:0px;">Posts</p></div>
-    {% endif %}
-  </div>
-  <div class="col-auto">
-    <a href="{% url 'follower_list' profile.pk %}" style="color:white; text-decoration: none;">
-      <div class="d-flex flex-column align-items-center">
-        <div><h4>{{ profile.followers_count }}</h4></div>
-        <div><p style="margin:0px; padding:0px;">Followers</p></div>
-      </div>
-    </a>
-  </div>
-  <div class="col-auto">
-    <a href="{% url 'following_list' profile.pk %}" style="color:white; text-decoration: none;">
-      <div class="d-flex flex-column align-items-center">
-        <div><h4>{{ profile.following_count }}</h4></div>
-        <div><p style="margin:0px; padding:0px;">Following</p></div>
-      </div>
-    </a>
-  </div>
-</div>
+  <script>
+    $(document).ready(function () {
+      var profileSectionHeight = $("#profileSection").height();
+      var stickyHeader = $("#stickyHeader");
 
-<hr/>
-</div>
-
-{% if profile.user == user %}
-<div class="row mb-5 mt-4 ps-3 pe-3">
-  <a href="{% url 'create_post' %}" class="btn btn-secondary rubik-bold" style="font-size:20px;"><b>New Post</b></a>
-  <!-- <a href="{% url 'create_post' %}" class="btn btn-secondary"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a> -->
-</div>
-{% else %}
-  <form action="{% url 'follow_user' profile.pk %}" method="POST">
-    {% csrf_token %}
-    {% if is_followed %}
-    <div class="row mb-5 mt-4 ps-3 pe-3">
-      <button type="submit" class="btn btn-secondary rubik-bold" style="font-size: 20px;"><b>Unfollow</b></button>
-    </div>
-    {% else %}
-    <div class="row mb-5 mt-4 ps-3 pe-3">
-      <button type="submit" class="btn btn-primary rubik-bold" style="font-size: 20px;"><b>Follow</b></button>
-    </div>
-    {% endif %}
-  </form>
-{% endif %}
-
-<div class="row">
-  {% if profile_posts %}
-    {% for post in profile_posts %}
-      <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-center justify-content-center">
-        <a href="{% url 'post_detail' post.author.pk post.pk %}">
-          <div class="post-card">
-            <img class="img-fluid shadow-lg explore-post" 
-              src="{{ post.image.url }}"
-              alt="Post Image"
-              style="border-radius: 25px; object-fit: cover;"
-            />
-          </div>
-        </a>
-      </div>
-    {% endfor %}
-  {% else %}
-  <div class="container d-flex justify-content-center align-items-center" style="margin-top: 30px;">
-    <div class="row">
-      <div class="col text-center">
-        <i class="fa-solid fa-camera fa-2xl mb-4" style="color: gray;"></i>
-        <h3 class="rubik-bold" style="color: gray;">No Posts</h3>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function() {
-    var profileSectionHeight = $('#profileSection').height();
-    var stickyHeader = $('#stickyHeader');
-
-    $(window).scroll(function() {
-      if ($(window).scrollTop() > profileSectionHeight) {
-        if (stickyHeader.hasClass('d-none')) {
-          stickyHeader.removeClass('d-none');
-          setTimeout(function() {
-            stickyHeader.css('top', '71.5px');
-          }, 10); // Slight delay to ensure the class removal takes effect
+      $(window).scroll(function () {
+        if ($(window).scrollTop() > profileSectionHeight) {
+          if (stickyHeader.hasClass("d-none")) {
+            stickyHeader.removeClass("d-none");
+            setTimeout(function () {
+              stickyHeader.css("top", "71.5px");
+            }, 10); // Slight delay to ensure the class removal takes effect
+          }
+        } else {
+          if (!stickyHeader.hasClass("d-none")) {
+            stickyHeader.css("top", "-65px");
+            setTimeout(function () {
+              stickyHeader.addClass("d-none");
+            }, 300); // Duration of the animation
+          }
         }
-      } else {
-        if (!stickyHeader.hasClass('d-none')) {
-          stickyHeader.css('top', '-65px');
-          setTimeout(function() {
-            stickyHeader.addClass('d-none');
-          }, 300); // Duration of the animation
-        }
-      }
+      });
+
+      setTimeout(function () {
+        $(".alert").alert("close");
+      }, 5000); // 5 seconds timeout
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('scrolltoTopBtn').addEventListener('click', function(event) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    });
 
-      setTimeout(function() {
-          $('.alert').alert('close');
-      }, 5000); // 5 seconds timeout
-  });
-</script>
+    function followUser(userId) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'follow_user_index' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'user_id': userId,
+            },
+            success: function(response) {
+                var button = $("#followBtn_" + userId);
+                var followersCount = $("#followersCount");
+                if (response.follows) {
+                  button.removeClass("btn-primary").addClass("prof-button");
+                  button.html('<h6 class="mt-1 mb-1 rubik-bold">Following</h6>');
+                } else {
+                  button.removeClass("prof-button").addClass("btn-primary");
+                  button.html('<h6 class="mt-1 mb-1 rubik-bold">Follow</h6>');
+                }
+                followersCount.text(response.followers_count);
+            },
+            error: function(xhr, status, error) {
+              console.error(xhr.responseText);
+            }
+        });
+    }
 
-{% endblock %}
+  </script>
+
+  {% endblock %}
+</div>
+

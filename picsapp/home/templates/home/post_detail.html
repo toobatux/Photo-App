@@ -87,15 +87,15 @@
           </div>
           {% endif %}
           {% for comment in comments %}
-          <div class="row ms-3 me-3 mt-3 mb-3 d-flex" style="height: 60px">
+          <div class="row ms-3 me-3 mt-3 mb-3 d-flex" style="min-height: 60px">
             <div class="col-auto ps-0">
-              <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" src="{{ comment.author.profile.profile_picture.url }}" alt="Comment Author Profile Picture"/>
+              <img class="rounded-circle" style="height: 50px; width: 50px; object-fit: cover;" src="{{ comment.author.profile_picture.url }}" alt="Comment Author Profile Picture"/>
             </div>
             <div class="col ps-0 pe-0" style="max-width: 300px;">
-              <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><b>{{ comment.author.username }}</b></a>
+              <a href="{% url 'profile' comment.author.pk %}" style="color: white; text-decoration: none;"><b>{{ comment.author.user.username }}</b></a>
               <p>{{ comment.text }}</p>
             </div>
-            {% if user == comment.author or user == post.author.user %}
+            {% if user == comment.author.user or user == post.author.user %}
             <div class="col-auto">
               <form action="{% url 'delete_comment' post.author.pk post.pk comment.pk %}" method="post" class="d-inline">
                 {% csrf_token %}

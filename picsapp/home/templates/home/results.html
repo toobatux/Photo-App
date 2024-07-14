@@ -17,17 +17,11 @@
         <h2 class="rubik-bold mb-0 text-center pb-2">Results for "{{ query }}"</h2>
       </div>
     </div>
-    <div class="row d-flex justify-content-center align-items-center mt-2 pb-3">
-      <form
-        method="get"
-        action="{% url 'search' %}"
-        class="d-flex"
-        role="search"
-        style="width: 27rem;"
-      >
-      <div class="input-group">
-        <input id="id_query" type="text" name="query" class="form-control rubik-bold me-2" placeholder="Find your friends" aria-label="Search" maxlength="15" required="" style="border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
-        <button class="btn btn-primary rubik-bold" type="submit" style="width: 6rem; border-top-right-radius: 20px; border-bottom-right-radius: 20px;"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="row d-flex justify-content-center align-items-center body-background" style="height: 55px;">
+      <form method="get" action="{% url 'search' %}" class="d-flex" role="search" style="width: 50rem;">
+        <div class="input-group">
+        <input id="id_query" type="text" name="query" class="form-control rubik-bold" placeholder="Find your friends" aria-label="Search" maxlength="20" required="" style="border-color: #303030; border-top-left-radius: 20px; border-bottom-left-radius: 20px; background-color: #181818; color: white;">
+        <button class="btn rubik-bold" type="submit" style="width: 6rem; border-top-right-radius: 20px; border-bottom-right-radius: 20px; background-color:#303030;"><i class="fa-solid fa-magnifying-glass" style="color: white;"></i></button>
         </div>
       </form>
     </div>

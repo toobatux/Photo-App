@@ -75,12 +75,11 @@
               >Profile Picture</label
             >
             <input
-              class="form-control"
+              class="form-control input-field"
               id="id_profile_picture"
               type="file"
               name="profile_picture"
               accept="image/"
-              style="border-color: #101010;"
             />
           </div>
           <!-- {% if not is_default_pic %}
@@ -97,32 +96,30 @@
             <label for="id_name" class="form-label rubik-bold">Name</label>
             <input
               id="id_name"
-              class="form-control rubik-regular"
+              class="form-control rubik-regular input-field"
               type="text"
               name="name"
               rows="1"
               maxlength="20"
-              style="border-color: #101010;"
             />
           </div>
           <div class="row mb-3">
             <label for="id_bio" class="form-label rubik-bold">Bio</label>
             <input
               id="id_bio"
-              class="form-control rubik-regular"
+              class="form-control rubik-regular input-field"
               type="text"
               name="bio"
               rows="1"
               maxlength="50"
-              style="border-color: #101010;"
             />
           </div>
           <div class="row mt-5">
-            <button class="btn btn-primary rubik-bold" type="submit">Save Changes</button>
+            <button class="btn btn-primary rubik-bold" type="submit" style="border-radius: 15px;">Save Changes</button>
           </div>
           <div class="row mt-3 mb-4">
             <a href="{% url 'profile' user.profile.pk %}" class="ps-0 pe-0"
-              ><button type="button" class="btn btn-outline-secondary w-100 rubik-bold">
+              ><button type="button" class="btn btn-outline-secondary w-100 rubik-bold" style="border-radius:15px;">
                 Cancel
               </button></a
             >

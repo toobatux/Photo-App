@@ -162,7 +162,7 @@
                     {% endfor %}
                 </div>
                 <div class="modal-footer" style="border: none;">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><b>Close</b></button>
+                  <button type="button" class="btn prof-button" data-bs-dismiss="modal" style="border-radius:15px;"><b>Close</b></button>
                 </div>
               </div>
             </div>
@@ -219,12 +219,10 @@
                     <form method="post" id="commentForm-{{ post.id }}">
                       {% csrf_token %}
                       <div class="row mb-3">
-                        <div class="col-9 ps-2 pe-0">
-                          <input id="id_text" class="form-control" type="text" name="text" rows="1" placeholder="Leave a Comment" required="">
-                        </div>
-                        <div class="col-3 ps-1 pe-2">
-                          <button class="btn btn-outline-primary w-100" type="submit"><i class="fa-solid fa-arrow-up"></i></button>
-                        </div>
+                        <div class="input-group">
+                            <input id="id_text" class="form-control" type="text" name="text" rows="1" placeholder="Leave a comment..." required="" style="border-color: #303030; border-top-left-radius: 20px; border-bottom-left-radius: 20px; background-color: #181818; color: white;">
+                            <button class="btn btn-primary rubik-bold" type="submit" style="width: 6rem; border-top-right-radius: 20px; border-bottom-right-radius: 20px;"><i class="fa-solid fa-arrow-up" style="color: white;"></i></button>
+                            </div>
                       </div>
                     </form>
                     </div>

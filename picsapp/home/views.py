@@ -253,6 +253,7 @@ def results_profile(request, user_id):
         'post_count': post_count,
         'profile_posts': profile_posts,
         'is_followed': is_followed,
+        'pic_color': profile.pic_color,
     }
 
     return render(request, "home/results_profile.html", context)
@@ -290,8 +291,15 @@ def post_detail(request, user_id, post_id):
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
             new_comment.post = post
-            new_comment.author = request.user
+            new_comment.author = request.user.profile
             new_comment.save()
+            Notification.objects.create(
+                sender=request.user.profile,
+                receiver=post.author,
+                notification_type='comment',
+                post=post,
+                comment=new_comment
+            )
             return redirect(reverse('post_detail', args=[user_id, post_id]))
 
     context = {
@@ -308,8 +316,10 @@ def post_detail(request, user_id, post_id):
 def delete_comment(request, user_id, post_id, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     post = get_object_or_404(Post, pk=post_id)
-    if request.user == comment.author or post.author:
+    if request.user.profile == comment.author or post.author:
         comment.delete()
+        Notification.objects.filter(sender=comment.author, receiver=post.author, notification_type='comment').delete()
+
     return redirect('post_detail', user_id=post.author.id, post_id=post_id)
 
 @login_required(login_url="/login/")

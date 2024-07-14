@@ -4,7 +4,7 @@
 <div class="sticky-top" style="top: 71px;">
   <div class="container mt-3 mb-0">
     <div class="row d-flex align-items-center body-background text-center" style="height: 60px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
-        <h2 class="rubik-bold mb-0 text-center">Notifications</h2>
+        <h2 class="rubik-bold mb-0 text-center">Activity</h2>
     </div>
   </div>
 </div>
@@ -15,13 +15,13 @@
         <hr class="mt-4" style="color: gray;"/>
         <h3 class="notification-title mb-4">Today</h3>
         {% for notification in todays_notifs %}
-        <div class="row d-flex align-items-center mb-3 w-100">
+        <div class="row d-flex mb-3 w-100">
             <div class="col-auto ps-0">
             <a href="{% url 'profile' notification.sender.pk %}">
               <img class="rounded-circle" style="height: 40px; width: 40px; object-fit: cover" src="{{ notification.sender.profile_picture.url }}" alt="Profile Picture" />
             </a>
             </div>
-            <div class="col-7 ps-0">
+            <div class="col-6 pe-0 ps-0 me-auto text-wrap" style="white-space: normal; word-wrap: break-word;">
                 {% if notification.notification_type == 'like' %}
                     <div>
                         <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
@@ -30,6 +30,14 @@
                     <div style="color: gray;">
                         {{ notification.created_on|time:"P" }}
                     </div>
+                {% elif notification.notification_type == 'comment' %}
+                    <div>
+                        <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
+                            on your post: "{{ notification.comment.text }}"
+                    </div>
+                    <div style="color: gray;">
+                        {{ notification.created_on|time:"P" }}
+                    </div>                       
                 {% elif notification.notification_type == 'follow' %}
                     {% if notification.sender_is_followed %}
                     <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
@@ -43,8 +51,8 @@
                     {% endif %}
                 {% endif %}
             </div>
-            <div class="col-auto ms-auto">
-                {% if notification.notification_type == 'like' %}
+            <div class="col-auto ps-0">
+                {% if notification.notification_type == 'like' or notification.notification_type == 'comment' %}
                 <a href="{% url 'post_detail' notification.post.author.pk notification.post.pk %}">
                     <img src="{{ notification.post.image.url }}" style="width: 40px; height: 40px; border-radius:10px;"/>
                 </a>
@@ -74,33 +82,66 @@
         <hr class="mt-4" style="color: gray;"/>
         <h3 class="notification-title mb-4">Earlier</h3>
         {% for notification in earlier_notifs %}
-        <div class="row d-flex align-items-center mb-2 w-100">
+        <div class="row d-flex mb-3 w-100">
             <div class="col-auto ps-0">
             <a href="{% url 'profile' notification.sender.pk %}">
               <img class="rounded-circle" style="height: 40px; width: 40px; object-fit: cover" src="{{ notification.sender.profile_picture.url }}" alt="Profile Picture" />
             </a>
             </div>
-            <div class="col-8 ps-0">
+            <div class="col-6 ps-0 text-wrap" style="white-space: normal; word-wrap: break-word;">
                 {% if notification.notification_type == 'like' %}
                     <div>
                         <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
                             your post:
                     </div>
                     <div style="color: gray;">
-                        {{ notification.created_on|date:"F j, Y" }}
+                        {{ notification.created_on|time:"P" }}
                     </div>
+                {% elif notification.notification_type == 'comment' %}
+                    <div>
+                        <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
+                            on your post: "{{ notification.comment.text }}"
+                    </div>
+                    <div style="color: gray;">
+                        {{ notification.created_on|time:"P" }}
+                    </div>    
                 {% elif notification.notification_type == 'follow' %}
+                    {% if notification.sender_is_followed %}
                     <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
                         you.
+                    {% else %}
+                    <a href="{% url 'profile' notification.sender.pk %}" class="username-small"><b>{{ notification.sender.user.username }}</b></a> {{ notification.get_notification_type_display }}
+                        you.
+                    <div style="color: gray;">
+                        {{ notification.created_on|time:"P" }}
+                    </div>
                     {% endif %}
+                {% endif %}
             </div>
-            {% if notification.notification_type == 'like' %}
             <div class="col-auto ms-auto">
+                {% if notification.notification_type == 'like' or notification.notification_type == 'comment' %}
                 <a href="{% url 'post_detail' notification.post.author.pk notification.post.pk %}">
                     <img src="{{ notification.post.image.url }}" style="width: 40px; height: 40px; border-radius:10px;"/>
                 </a>
+                 {% elif notification.notification_type == 'follow' %}
+                    {% if notification.sender_is_followed %}
+                    <div style="color: gray;">
+                        {{ notification.created_on|time:"P" }}
+                    </div>
+                    {% else %}
+                    <form id="followForm{{ notification.sender.pk }}" onsubmit="event.preventDefault(); followUser('{{ notification.sender.pk }}')">
+                        {% csrf_token %}
+                        <button type="submit" id="followBtn_{{ notification.sender.pk }}" class="btn btn-primary follow-btn user-{{ notification.sender.pk }}" style="border-radius: 15px;">
+                          {% if profile.is_followed %}
+                            <b class="rubik-bold">Following</b>
+                          {% else %}
+                            <b class="rubik-bold">Follow</b>
+                          {% endif %}
+                        </button>
+                      </form>
+                    {% endif %}
+                {% endif %}
             </div>
-            {% endif %}
         </div>
         {% endfor %}
         {% endif %}

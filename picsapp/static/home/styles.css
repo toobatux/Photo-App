@@ -80,11 +80,26 @@ h4 {
   height: 300px !important;
 }
 
+.prof-button {
+  background-color: #252525 !important; 
+  color: white !important;
+}
+
+.prof-button:hover {
+  background-color: #303030 !important; 
+}
 
 .archivo-black-regular {
   font-family: "Archivo Black", sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.input-field {
+  border-color: #181818 !important; 
+  background-color: #303030 !important; 
+  color: white !important;
+  border-radius: 15px !important;
 }
 
 .follower-container {

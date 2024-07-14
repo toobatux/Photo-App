@@ -32,7 +32,7 @@
         </div>  
 
         <div className="container ps-0 pe-0">
-          <!-- <svg viewBox="0 45 310 50" width="100%">
+          <svg viewBox="0 45 310 50" width="100%">
             <rect x="0" y="0" width="500" height="80" class="svg-body-background"/>
             <path fill="var()" />
             <path
@@ -49,7 +49,7 @@
                 </clipPath>
               </defs>
             </svg>
-          </div> -->
+          </div>
           <!-- <footer class="footer fixed-bottom mt-auto py-3 pb-5" style="background-color: #141c1f;">
             <div className="container">
               <div className="row">
@@ -62,7 +62,7 @@
           {% if user.is_authenticated %}
           <footer class="footer fixed-bottom d-flex justify-content-center align-items-center py-3 nav-background">
               <div className="row d-flex justify-content-center align-items-center">
-                  <a href="{% url 'create_post' %}" class="btn btn-secondary" style="width: 200px; border-radius: 15px;"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a>
+                  <a href="{% url 'create_post' %}" class="btn prof-button" style="width: 200px; border-radius: 15px;"><i class="fa-solid fa-plus fa-lg" style="color: white;"></i></a>
               </div>
           </footer>
           {% else %}
@@ -75,7 +75,8 @@
               </div>
             </div>
           </footer>
-          {% endif %}    
+          {% endif %}   
+        </div> 
     </body>
     <!-- <script>
       document.addEventListener('contextmenu', function(event) {

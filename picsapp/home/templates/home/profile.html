@@ -41,8 +41,10 @@
           </a>
         
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" style="background-color: #181818;">
-            <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-clone pe-2" style="color: gray;"></i>Copy Profile Link</a></li>
             {% if profile.user == user %}
+            <li><a class="dropdown-item" href="{% url 'edit_profile' %}" style="color: white;"><i class="fa-regular fa-pen-to-square pe-2" style="color: gray;"></i>Edit Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'settings' %}" style="color: white;"><i class="fa-solid fa-gear pe-2" style="color: gray;"></i>Settings</a></li>
+            <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-clone pe-2" style="color: gray;"></i>Copy Profile Link</a></li>
              <li><hr class="dropdown-divider" style="color: gray;"></li>
             <li>
               <form action="{% url 'logout' %}" method="post" class="ps-0 pe-0 w-100">
@@ -59,6 +61,7 @@
               <li><button type="submit" class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-square-plus pe-2" style="color: gray;"></i>Follow</button></li>
               {% endif %}
             </form>
+            <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-clone pe-2" style="color: gray;"></i>Copy Profile Link</a></li>
             <li><hr class="dropdown-divider" style="color: gray;"></li>
             <li><a class="dropdown-item" href="#" style="color: white;"><i class="fa-regular fa-circle-xmark pe-2" style="color: gray;"></i>Block</a></li>
             {% endif %}
@@ -66,6 +69,8 @@
         </div>
       </div>
     </div>
+
+
     <div class="row profile-top" style="z-index: 100">
       <div class="col-auto d-flex justify-content-center align-items-center">
         {% if profile.profile_picture %}
@@ -166,17 +171,17 @@
     <div class="col-8 d-flex pe-1 ms-auto">
       <a
         href="{% url 'edit_profile' %}"
-        class="btn btn-secondary w-100"
+        class="btn w-100 prof-button"
         style="border-radius: 15px;"
-        ><h5 class="mt-1 mb-1 rubik-bold">Edit Profile</h5></a
+        ><h6 class="mt-1 mb-1 rubik-bold">Edit Profile</h6></a
       >
     </div>
     <div class="col-4 d-flex align-items-center">
       <a
         href="{% url 'settings' %}"
-        class="btn btn-secondary w-100 d-flex align-items-center justify-content-center"
-        style="border-radius: 15px; height: 46px;"
-        ><i class="fa-solid fa-gear fa-lg"></i
+        class="btn w-100 d-flex align-items-center justify-content-center prof-button"
+        style="border-radius: 15px;  height: 41px;"
+        ><i class="fa-solid fa-gear"></i
       ></a>
     </div>
 
@@ -189,10 +194,10 @@
         <button
           type="submit"
           id="followBtn_{{ profile.pk }}"
-          class="btn btn-secondary rubik-bold w-100 user-{{ profile.pk }}"
+          class="btn prof-button rubik-bold w-100 user-{{ profile.pk }}"
           style="border-radius: 15px;"
         >
-          <h5 class="mt-1 mb-1 rubik-bold">Following</h5>
+          <h6 class="mt-1 mb-1 rubik-bold">Following</h6>
         </button>
       </div>
       {% else %}
@@ -203,7 +208,7 @@
           class="btn btn-primary rubik-bold w-100 user-{{ profile.pk }}"
           style="border-radius: 15px;"
         >
-          <h5 class="mt-1 mb-1 rubik-bold">Follow</h5>
+          <h6 class="mt-1 mb-1 rubik-bold">Follow</h6>
         </button>
       </div>
       {% endif %}
@@ -290,7 +295,7 @@
         <div class="col-auto d-flex float-end pe-0 ms-auto">
           <a
             href="{% url 'edit_profile' %}"
-            class="btn btn-secondary profile-edit-btn shadow-lg"
+            class="btn prof-button profile-edit-btn shadow-lg"
             style="border-radius: 15px;"
             ><b>Edit Profile</b></a
           >
@@ -298,7 +303,7 @@
         <div class="col-auto d-flex float-end pe-0">
           <a
             href="{% url 'settings' %}"
-            class="btn btn-secondary shadow-lg"
+            class="btn prof-button shadow-lg"
             style="width: 4rem; border-radius: 15px;"
             ><i class="fa-solid fa-gear"></i
           ></a>
@@ -384,11 +389,11 @@
                 var button = $("#followBtn_" + userId);
                 var followersCount = $("#followersCount");
                 if (response.follows) {
-                  button.removeClass("btn-primary").addClass("btn-secondary");
-                  button.html('<h5 class="mt-1 mb-1 rubik-bold">Following</h5>');
+                  button.removeClass("btn-primary").addClass("prof-button");
+                  button.html('<h6 class="mt-1 mb-1 rubik-bold">Following</h6>');
                 } else {
-                  button.removeClass("btn-secondary").addClass("btn-primary");
-                  button.html('<h5 class="mt-1 mb-1 rubik-bold">Follow</h5>');
+                  button.removeClass("prof-button").addClass("btn-primary");
+                  button.html('<h6 class="mt-1 mb-1 rubik-bold">Follow</h6>');
                 }
                 followersCount.text(response.followers_count);
             },
