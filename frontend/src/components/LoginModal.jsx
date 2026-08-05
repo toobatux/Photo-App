@@ -3,8 +3,9 @@ import { useNavigate } from "react-router";
 import Modal from "./Modal";
 // import { customFetch } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { createPortal } from "react-dom";
 
-const LoginModal = ({ user, setUser, isOpen, onClose }) => {
+const LoginModal = ({ user, setUser, isOpen, onClose, showToast }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   let navigate = useNavigate();
   const { login, logout } = useAuth();
@@ -13,26 +14,28 @@ const LoginModal = ({ user, setUser, isOpen, onClose }) => {
     e.preventDefault();
     try {
       await login(formData);
+      showToast("Sign in successful", "success");
       onClose();
-      navigate(0);
     } catch (error) {
       alert("Login failed: " + error.message);
+      showToast("Sign in failed. Try again later.", "error");
     }
   };
 
   const handleLogout = async () => {
     try {
       await logout();
+      showToast("Sign out successful", "success");
       onClose();
-      navigate(0);
     } catch (error) {
+      showToast("Sign out failed. Try again later.", "error");
       console.error("Logout failed:", error.message);
       alert("Error logging out.");
     }
   };
 
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size="sm">
+  const modalContent = (
+     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       {user ? (
         <div className="p-6">
           <div className="nav-links">
@@ -80,7 +83,9 @@ const LoginModal = ({ user, setUser, isOpen, onClose }) => {
         </div>
       )}
     </Modal>
-  );
+  )
+
+  return createPortal(modalContent, document.body);
 };
 
 export default LoginModal;

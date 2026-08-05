@@ -12,6 +12,9 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import Modal from "../components/Modal";
 import { useEffect, useRef, useState } from "react";
 import useModal from "../hooks/useModal";
+import { customFetch } from "../services/api";
+import useToast from "../hooks/useToast";
+import Toast from "./Toast";
 
 const PostModal = ({
   selectedPost,
@@ -19,6 +22,8 @@ const PostModal = ({
   handlePrevPost,
   postModal,
   user,
+  onPostUpdate,
+  showDeleteToast
 }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -26,46 +31,100 @@ const PostModal = ({
   const [caption, setCaption] = useState(
     selectedPost.caption ? selectedPost.caption : null,
   );
+  const [isPublic, setIsPublic] = useState(true);
+  const [loading, setLoading] = useState(false);
   const deleteModal = useModal();
+  const { toast, setToast, showToast } = useToast();
 
   const handleToggleLiked = () => {
     setIsLiked((prev) => !prev);
+    if (isLiked) {
+      showToast("Like removed", "success");
+    } else {
+      showToast("Liked post", "success");
+    }
   };
   const handleToggleSaved = () => {
     setIsSaved((prev) => !prev);
+    if (isSaved) {
+      showToast("Unsaved post", "success");
+    } else {
+      showToast("Saved post", "success");
+    }
   };
 
   const handleDelete = () => {
     deleteModal.close();
     postModal.close();
-  }
+    showDeleteToast("Post deleted successfully", "success");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (selectedPost.caption === caption) { 
+      setIsEditing(false); 
+      return; 
+    };
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("caption", caption);
+
+      const updatedPost = await customFetch(
+        `/api/posts/${selectedPost.id}/update/`,
+        {
+          method: "PATCH",
+          body: formData,
+        },
+      );
+
+      console.log("Updated post", updatedPost);
+      showToast("Post updated successfully", "success");
+      
+      if (onPostUpdate) {
+        onPostUpdate(updatedPost);
+      }
+
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to update post:", err);
+      showToast("Failed to update post. Please try again.", "error");
+      throw new Error(JSON.stringify(err));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const headerContent = (
     <Link
-            to={`/${selectedPost.username}`}
-            className="flex w-fit items-center gap-4 text-sm group cursor-pointer"
-          >
-            <div className="relative">
-              <img
-                src={selectedPost.profile_pic}
-                alt={selectedPost.username}
-                className="w-8 h-8 rounded-full bg-foreground/10"
-              />
-              <div className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"></div>
-            </div>
-            <p className="group-hover:underline">{selectedPost.profile_name}</p>
-          </Link>
-  )
+      to={`/${selectedPost.username}`}
+      className="flex w-fit items-center gap-4 text-sm group cursor-pointer"
+    >
+      <div className="relative">
+        <img
+          src={selectedPost.profile_pic}
+          alt={selectedPost.username}
+          className="w-8 h-8 rounded-full bg-foreground/10"
+        />
+        <div className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"></div>
+      </div>
+      <p className="group-hover:underline">{selectedPost.profile_name}</p>
+    </Link>
+  );
 
   const modalContent = (
-    <Modal isOpen={postModal.isOpen} onClose={postModal.close} size="xl" header={headerContent}>
-      <div
-        className="flex flex-col w-full pt-4"
-      >
+    <Modal
+      isOpen={postModal.isOpen}
+      onClose={postModal.close}
+      size="xl"
+      header={headerContent}
+    >
+      {toast && <Toast toast={toast} setToast={setToast}/>}
+      <div className="flex flex-col w-full pt-4">
         {/* Post image */}
-        <div
-          className="relative flex w-full h-full px-4 md:px-6 max-h-[65vh] items-stretch justify-center"
-        >
+        <div className="relative flex w-full h-full px-4 md:px-6 max-h-[60vh] min-h-[300px] items-stretch justify-center">
           <div className="flex w-full justify-center border border-foreground/5 rounded-lg overflow-clip">
             <img
               src={selectedPost.image}
@@ -74,13 +133,13 @@ const PostModal = ({
             />
           </div>
 
-          <div className="group absolute top-0 right-0 bottom-0 left-0 bg-transparent hover:bg-background/20">
+          <div className="group absolute top-0 right-0 bottom-0 left-0 bg-transparent">
             <div className="relative h-full">
               <div className="hidden group-hover:flex absolute top-1/2 left-6 lg:left-10 z-10">
                 <button
                   type="button"
                   onClick={() => handlePrevPost()}
-                  className="nav-btn-secondary px-4"
+                  className="px-4 post-btn"
                 >
                   <NavigateBeforeIcon fontSize="small" />
                 </button>
@@ -89,7 +148,7 @@ const PostModal = ({
                 <button
                   type="button"
                   onClick={() => handleNextPost()}
-                  className="nav-btn-secondary px-4"
+                  className="post-btn px-4"
                 >
                   <NavigateNextIcon fontSize="small" />
                 </button>
@@ -101,7 +160,7 @@ const PostModal = ({
         {/* Post options and metadata */}
         <div className="flex flex-col w-full gap-4 p-4 md:p-6">
           {isEditing ? (
-            <form className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
                 <label
                   htmlFor="caption"
@@ -151,7 +210,7 @@ const PostModal = ({
                   <button
                     type="submit"
                     className="btn-primary"
-                    // disabled={loading}
+                    disabled={loading}
                   >
                     Save
                   </button>
@@ -218,20 +277,29 @@ const PostModal = ({
           )}
         </div>
       </div>
-      <Modal isOpen={deleteModal.isOpen} onClose={deleteModal.close} isClosable={false} size="sm">
+      <Modal
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.close}
+        isClosable={false}
+        size="sm"
+      >
         <div className="p-6">
           <div className="nav-links">
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-semibold">Delete post</h1>
-              <p className="text-foreground/70">Are you sure you want to delete this post?</p>
+              <p className="text-foreground/70">
+                Are you sure you want to delete this post?
+              </p>
               <div className="flex justify-end gap-2 mt-4">
-                <button onClick={deleteModal.close} className="btn-secondary">Cancel</button>
-              <button
-                onClick={handleDelete}
-                className="btn-destructive-outlined px-4"
-              >
-                Delete
-              </button>
+                <button onClick={deleteModal.close} className="btn-secondary">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="btn-destructive-outlined px-4"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>

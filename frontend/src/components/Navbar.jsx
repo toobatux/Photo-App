@@ -13,6 +13,8 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { useAuth } from "../context/AuthContext";
 import ProfileModal from "./ProfileModal";
+import useToast from "../hooks/useToast";
+import Toast from "./Toast";
 
 const Navbar = () => {
   const [solidNav, setSolidNav] = useState(false);
@@ -23,6 +25,7 @@ const Navbar = () => {
   const loginModal = useModal();
   const logoutModal = useModal();
   const profileModal = useModal();
+  const { toast, setToast, showToast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -117,6 +120,7 @@ const Navbar = () => {
         <NewPostModal
           isOpen={newPostModal.isOpen}
           onClose={newPostModal.close}
+          showToast={showToast}
         />
       )}
 
@@ -126,6 +130,7 @@ const Navbar = () => {
           setUser={setUser}
           isOpen={loginModal.isOpen}
           onClose={loginModal.close}
+          showToast={showToast}
         />
       )}
       {logoutModal.isOpen && (
@@ -134,8 +139,11 @@ const Navbar = () => {
           setUser={setUser}
           isOpen={logoutModal.isOpen}
           onClose={logoutModal.close}
+          showToast={showToast}
         />
       )}
+
+      {toast && <Toast toast={toast} setToast={setToast} />}
     </>
   );
 };

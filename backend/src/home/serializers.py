@@ -11,7 +11,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['name', 'bio', 'user', 'profile_picture', 'following_count', 'followers_count', 'pic_color']
+        fields = ['name', 'bio', 'camera', 'location', 'user', 'profile_picture', 'following_count', 'followers_count', 'pic_color']
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

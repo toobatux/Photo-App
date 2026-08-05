@@ -17,6 +17,8 @@ class Profile(models.Model):
     )
     name = models.TextField(blank=True, null=True, max_length=20)
     bio = models.TextField(blank=True, null=True, max_length=50)
+    camera = models.TextField(blank=True, null=True, max_length=50)
+    location = models.TextField(blank=True, null=True, max_length=120)
     profile_picture = models.ImageField(upload_to='profile_pictures/', default='profile_pictures/default_pic.jpg', blank=True, null=True)
     saved_posts = models.ManyToManyField('Post', related_name='saved_by', blank=True)
     pic_color = models.CharField(max_length=7, blank=True, null=True)

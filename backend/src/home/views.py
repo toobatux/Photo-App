@@ -65,7 +65,7 @@ class CurrentUserView(APIView):
     def get(self, request):
         profile = request.user.profile
         serializer = ProfileSerializer(profile, context={'request': request})
-        print(serializer.data)
+        # print(serializer.data)
 
         return Response(serializer.data)
 
@@ -145,9 +145,25 @@ class PostCreateAPIView(APIView):
         print("Serializer errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class PostUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
+    def patch(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        if (post.author.user != request.user):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = PostSerializer(post, data=request.data, partial=True, context={'request': request})
 
-
+        if serializer.is_valid():
+            updated_post = serializer.save()
+            return Response(
+                PostSerializer(updated_post, context={'request': request}).data, 
+                status=status.HTTP_200_OK
+            )
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @login_required(login_url='/login/')

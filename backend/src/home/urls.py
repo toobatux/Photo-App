@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from .views import SignUpView, PostCreateView, PostUpdateView, FeedAPIView, ProfileAPIView
-from .views import CSRFTokenView, LoginView, LogoutView, CurrentUserView, PostCreateAPIView, ProfileUpdateAPIView
+from .views import CSRFTokenView, LoginView, LogoutView, CurrentUserView, PostCreateAPIView, ProfileUpdateAPIView, PostUpdateAPIView
 
 urlpatterns = [
     path("api/csrf/", CSRFTokenView.as_view(), name="csrf"),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/profile/update/', ProfileUpdateAPIView.as_view(), name='profile-update'),
     path("api/profile/<str:username>/", ProfileAPIView.as_view(), name="profile-api"),
     path("api/posts/create/", PostCreateAPIView.as_view(), name="api-post-create"),
+    path("api/posts/<int:pk>/update/", PostUpdateAPIView.as_view(), name="api-post-update"),
     
     path("", views.index, name="index"),
     path('profile/<str:username>/', views.profile, name='profile'),

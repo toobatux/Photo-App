@@ -6,15 +6,22 @@ import ProfileHeader from "../components/ProfileHeader";
 import PostDisplay from "../components/PostDisplay";
 import { useAuth } from "../context/AuthContext";
 import ProfileSkeleton from "../components/ProfileSkeleton";
+import useToast from "../hooks/useToast";
+import Toast from "../components/Toast";
 
 export function Profile() {
   const { username } = useParams();
   const { user } = useAuth();
 
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({
+    profile: {},
+    profile_posts: [],
+    pic_color: "#1e1e1e",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
+  const { toast, setToast, showToast } = useToast();
 
   const photoModal = useModal();
   const postModal = useModal();
@@ -80,7 +87,24 @@ export function Profile() {
   const { profile, profile_posts = [], pic_color = "#1e1e1e" } = data;
   const selectedPost = profile_posts[selectedPostIndex];
 
+  const handlePostUpdate = (updatedPost) => {
+    setData((prevData) => ({
+      ...prevData,
+      profile_posts: prevData.profile_posts.map((post) =>
+        post.id === updatedPost.id ? updatedPost : post,
+      ),
+    }));
+  };
+
+  const handleProfileUpdate = (updatedProfile) => {
+    setData((prevData) => ({
+      ...prevData,
+      profile: updatedProfile
+    }));
+  };
+
   return (
+    <>
     <div className="flex relative flex-col w-full">
       {/* Dynamic background gradient */}
       {/* <div
@@ -89,6 +113,7 @@ export function Profile() {
         }}
         className="fixed -top-180 md:-top-160 left-0 right-0 w-full z-0 h-[1000px] bg-background pointer-events-none"
       /> */}
+      {toast && <Toast toast={toast} setToast={setToast} />}
 
       <div className="flex flex-col z-10">
         <ProfileHeader
@@ -97,6 +122,10 @@ export function Profile() {
           profile_picture={profile.profile_picture}
           name={profile.name}
           bio={profile.bio}
+          location={profile.location}
+          camera={profile.camera}
+          showToast={showToast}
+          onUpdate={handleProfileUpdate}
         />
 
         <div className="pt-6 md:pt-12">
@@ -114,10 +143,14 @@ export function Profile() {
             handlePrevPost={handlePrevPost}
             postModal={postModal}
             user={user}
+            onPostUpdate={handlePostUpdate}
+            key={selectedPostIndex}
+            showDeleteToast={showToast}
           />
         )}
       </div>
     </div>
+    </>
   );
 }
 

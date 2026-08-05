@@ -1,15 +1,14 @@
 import Modal from "./Modal";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { customFetch } from "../services/api";
 import { useNavigate } from "react-router";
 
-const EditProfileModal = ({ isOpen, onClose, user, setUser }) => {
+const EditProfileModal = ({ isOpen, onClose, user, setUser, showToast, onUpdate }) => {
   const [name, setName] = useState(user?.name || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [camera, setCamera] = useState(user?.camera || "");
+  const [location, setLocation] = useState(user?.location || "");
   const [image, setImage] = useState(null);
   const [previewURL, setPreviewURL] = useState(user?.profile_picture || null);
   const [loading, setLoading] = useState(false);
@@ -38,6 +37,8 @@ const EditProfileModal = ({ isOpen, onClose, user, setUser }) => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("bio", bio);
+      formData.append("location", location);
+      formData.append("camera", camera);
       
       // Only attach the picture if the user actually picked a new file!
       if (image) {
@@ -50,13 +51,17 @@ const EditProfileModal = ({ isOpen, onClose, user, setUser }) => {
         body: formData,
       });
 
+      onUpdate(updatedProfile);
+
+      showToast("Profile updated successfully", "success");
+
       // Update global user/profile state so the Navbar & Page re-render immediately
       setUser(updatedProfile);
       onClose();
-      navigate(0);
+      // navigate(0);
     } catch (error) {
       console.error("Update failed:", error);
-      alert("Failed to update profile: " + error.message);
+      showToast("Failed to update profile. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -140,6 +145,18 @@ const EditProfileModal = ({ isOpen, onClose, user, setUser }) => {
                 type="text"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
+                className="input-box"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="location" className="text-sm">
+                Location
+              </label>
+              <input
+                id="location"
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 className="input-box"
               />
             </div>

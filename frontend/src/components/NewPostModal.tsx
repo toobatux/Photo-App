@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Modal from "./Modal"
 import { customFetch } from "../services/api"
 
-const NewPostModal = ({isOpen, onClose}) => {
+const NewPostModal = ({isOpen, onClose, showToast}) => {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -55,10 +55,10 @@ const NewPostModal = ({isOpen, onClose}) => {
         method: "POST",
         body: formData,
       });
-
-      alert("Post created successfully!");
+      showToast("Created post successfully", "success");
       onClose();
     } catch (err) {
+      showToast("Error creating post. Please try again.", "error");
       console.error("Failed to create post:", err);
       alert("Error creating post: " + err.message);
       setLoading(false);

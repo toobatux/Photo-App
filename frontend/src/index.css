@@ -117,3 +117,7 @@ p {
 .post-btn {
   @apply flex h-[34px] items-center shadow hover:shadow-lg whitespace-nowrap rounded-lg bg-background text-sm font-medium text-foreground/70 hover:text-foreground transition-all cursor-pointer
 }
+
+input, textarea, select {
+  font-size: 16px !important;
+}
