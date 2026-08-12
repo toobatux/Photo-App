@@ -31,7 +31,7 @@ export async function customFetch(endpoint, options = {}) {
     options.headers["X-CSRFToken"] = csrfToken;
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, options);
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
