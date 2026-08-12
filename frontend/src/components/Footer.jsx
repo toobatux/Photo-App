@@ -18,8 +18,8 @@ const Footer = () => {
           </defs>
         </svg>
       </div> */}
-      <footer className="p-4 md:p-6 border-t border-foreground/10">
-        <div className="flex w-full max-w-5xl m-auto justify-between">
+      <footer className="px-4 md:px-6 border-t border-foreground/10 flex h-[55px]">
+        <div className="flex w-full max-w-5xl m-auto items-center justify-between">
           <p className="text-xs text-foreground/60">ShowMe ©{new Date().getFullYear().toString()} </p>
           <p className="text-xs text-foreground/60">Made by Tom Krusinski</p>
         </div>

@@ -6,8 +6,9 @@ import App from './App.jsx'
 import Feed from './pages/Feed.jsx';
 import {Profile} from './pages/Profile.jsx';
 import RootLayout from './RootLayout.jsx';
-import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import { Gallery } from './pages/Gallery.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,7 +19,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/:username" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/galleries/:galleryId" element={<Gallery />} />
+          <Route path="/sign-up" element={<Signup />} />
         </Route>
       </Routes>
     </BrowserRouter>

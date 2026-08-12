@@ -3,29 +3,35 @@ import { Link } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import useModal from "../hooks/useModal";
-import NewPostModal from "./NewPostModal";
 import Modal from "./Modal";
 import LoginModal from "./LoginModal";
 import Dropdown from "./Dropdown";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
+import PhotoLibraryOutlinedIcon from "@mui/icons-material/PhotoLibraryOutlined";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { useAuth } from "../context/AuthContext";
 import ProfileModal from "./ProfileModal";
 import useToast from "../hooks/useToast";
 import Toast from "./Toast";
+import NewPhotoModal from "./NewPhotoModal";
+import NewGalleryModal from "./NewGalleryModal";
 
 const Navbar = () => {
   const [solidNav, setSolidNav] = useState(false);
   const lastScrollY = useRef(0);
 
   const { user, setUser, loading } = useAuth();
-  const newPostModal = useModal();
+  const { toast, setToast, showToast } = useToast();
+
+  const createDropdown = useModal();
+  const newPhotoModal = useModal();
+  const newGalleryModal = useModal();
   const loginModal = useModal();
   const logoutModal = useModal();
   const profileModal = useModal();
-  const { toast, setToast, showToast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +51,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logoutModal.open();
     profileModal.close();
-  }
+  };
 
   return (
     <>
@@ -68,7 +74,7 @@ const Navbar = () => {
               </label>
 
               <div className="absolute top-1/2 -translate-y-1/2 left-2">
-                <SearchIcon fontSize="small" className="text-foreground/20" />
+                <SearchIcon sx={{ fontSize: "18px" }} className="text-foreground/20" />
               </div>
               <input
                 id="search-photos-input"
@@ -80,13 +86,41 @@ const Navbar = () => {
           </div>
 
           <div className="flex gap-2 items-center">
+            <div className="relative">
             <button
-              onClick={user ? newPostModal.open : loginModal.open}
-              className="nav-btn-secondary-outlined flex w-8 md:w-full px-2 gap-2 items-center justify-center border border-foreground/10 text-foreground/70 rounded-lg hover:bg-foreground/10 hover:text-foreground cursor-pointer"
+              onClick={user ? createDropdown.open : loginModal.open}
+              className="nav-btn-secondary-outlined flex w-8 max-h-[32px] md:w-full md:px-2 gap-2 items-center justify-center border border-foreground/10 text-foreground/70 rounded-lg hover:bg-foreground/10 hover:text-foreground cursor-pointer"
             >
-              <AddIcon fontSize="small" />
-              <p className="hidden md:flex pe-2 text-sm">Upload photo</p>
+              <AddIcon sx={{ fontSize: "18px" }} />
+              <p className="hidden md:flex pe-2 text-sm">Create</p>
             </button>
+            {createDropdown.isOpen && (
+              <Dropdown
+                isOpen={createDropdown.open}
+                onClose={createDropdown.close}
+              >
+                <div className="flex flex-col p-1 w-32">
+                  <button
+                    onClick={() => { newPhotoModal.open(); createDropdown.close(); }}
+                    className="flex gap-3 p-2 items-center cursor-pointer hover:bg-foreground/5 rounded-lg select-none"
+                  >
+                    <PhotoOutlinedIcon
+                      sx={{ fontSize: "18px" }}
+                      className="text-foreground/50"
+                    />
+                    <span>Photo</span>
+                  </button>
+                  <button onClick={() => { newGalleryModal.open(); createDropdown.close(); }} className="flex gap-3 p-2 items-center cursor-pointer hover:bg-foreground/5 rounded-lg select-none">
+                    <PhotoLibraryOutlinedIcon
+                      sx={{ fontSize: "18px" }}
+                      className="text-foreground/50"
+                    />
+                    <span>Gallery</span>
+                  </button>
+                </div>
+              </Dropdown>
+            )}
+            </div>
 
             {user ? (
               <div className="relative flex items-center">
@@ -94,6 +128,7 @@ const Navbar = () => {
                   onClick={profileModal.open}
                   className={`flex w-8 h-8 shrink-0 cursor-pointer rounded-full border border-foreground/10 hover:border-foreground/15 overflow-hidden ${profileModal.isOpen && "outline-4 rounded-full outline-foreground/20"}`}
                 >
+                  <div className="absolute top-0 left-0 right-0 bottom-0 bg-transparent rounded-full"></div>
                   <img
                     src={user?.profile_picture}
                     alt={user?.user?.username}
@@ -101,7 +136,12 @@ const Navbar = () => {
                   />
                 </button>
                 {profileModal.isOpen && (
-                  <ProfileModal username={user.user.username} isOpen={profileModal.isOpen} onClose={profileModal.close} handleLogout={handleLogout}/>
+                  <ProfileModal
+                    username={user.user.username}
+                    isOpen={profileModal.isOpen}
+                    onClose={profileModal.close}
+                    handleLogout={handleLogout}
+                  />
                 )}
               </div>
             ) : (
@@ -115,11 +155,19 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
-      {newPostModal.isOpen && (
-        <NewPostModal
-          isOpen={newPostModal.isOpen}
-          onClose={newPostModal.close}
+
+      {newPhotoModal.isOpen && (
+        <NewPhotoModal
+          isOpen={newPhotoModal.isOpen}
+          onClose={newPhotoModal.close}
+          showToast={showToast}
+        />
+      )}
+
+      {newGalleryModal.isOpen && (
+        <NewGalleryModal
+          isOpen={newGalleryModal.isOpen}
+          onClose={newGalleryModal.close}
           showToast={showToast}
         />
       )}

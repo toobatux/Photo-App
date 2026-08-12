@@ -9,37 +9,49 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ntw0)y#(+kphn3gyz7@v&g9y9+e)h4_oj6qb=j-$h=s5igw!#+'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True 
+#os.getenv('DEBUG', 'True') == True
 
 ALLOWED_HOSTS = [
-    # 'localhost',
-    # '127.0.0.1',
     '*'
 ]
 
 CORS_ALLOWED_ORIGINS = [
-  "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "http://192.168.1.166:5173"
+  "http://localhost:5173"
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    'http://192.168.1.166:5173'
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 # Application definition
@@ -51,18 +63,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrap5',
     'src.home',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'storages'
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware',             
+    'django.middleware.csrf.CsrfViewMiddleware',             
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -80,9 +92,12 @@ REST_FRAMEWORK = {
 # Allows the browser to send cookies (session ID & CSRF token)
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+
 # Ensure Django sends the CSRF token via a cookie that React can read
 CSRF_COOKIE_HTTPONLY = False  # Set to False so React can read it via JS
 SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_PATH = '/'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -110,8 +125,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'showme_db',
+        'USER': 'showme_user',
+        'PASSWORD': 'secure_password',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -150,12 +169,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-import os
-
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -172,5 +190,29 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Define the URL prefix for media files
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
+SESSION_COOKIE_SECURE = False   # True instantly drops cookies on http://localhost
+CSRF_COOKIE_SECURE = False      # True instantly drops CSRF on http://localhost
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# AWS S3 Settings
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
+
+# AWS S3 Options
+AWS_S3_FILE_OVERWRITE = False  # Appends random hash if file names conflict
+AWS_DEFAULT_ACL = None
+
+STORAGES = {
+  'default': {
+    'BACKEND': 'storages.backends.s3.S3Storage',
+  },
+  'staticfiles': {
+    'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+  },
+}
+
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'

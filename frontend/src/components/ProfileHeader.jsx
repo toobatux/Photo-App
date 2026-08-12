@@ -27,14 +27,14 @@ const ProfileHeader = ({
   const handleToggleFollow = () => {
     setIsFollowing((prev) => !prev);
     if (isFollowing) {
-      showToast("Unfollowed user", "success");
+      showToast("Hired user", "success");
     } else {
-      showToast("Followed user", "success");
+      showToast("Removed hire from user", "success");
     }
   };
 
   return (
-    <div className="py-6 md:p-12 border-b border-foreground/10">
+    <div className="py-6 md:p-12">
       <div className="flex flex-col md:flex-row gap-6 md:gap-12">
         <div className="relative flex-none flex justify-content-center">
           {profile_picture && (
@@ -53,7 +53,7 @@ const ProfileHeader = ({
         <div className="flex-1 flex">
           <div>
             <div className="flex flex-col gap-2 md:gap-4 w-full">
-              <h2 className="w-full font-bold text-2xl md:text-4xl break-words whitespace-normal">
+              <h2 className="w-full font-bold text-2xl md:text-4xl wrap-break-word break-all whitespace-normal">
                 {name}
               </h2>
               <p className="text-sm">{bio}</p>
@@ -89,40 +89,31 @@ const ProfileHeader = ({
                     Edit profile
                   </button>
                 ) : user ? (
-                  isFollowing ? (
                     <button
                       onClick={handleToggleFollow}
-                      className="nav-btn-secondary-outlined px-4"
+                      className="nav-btn-primary px-4 w-[94px] justify-center"
                     >
-                      Following
+                      Hire
                     </button>
-                  ) : (
-                    <button
-                      onClick={handleToggleFollow}
-                      className="nav-btn-primary px-4"
-                    >
-                      Follow
-                    </button>
-                  )
                 ) : (
                   <button
                     onClick={loginModal.open}
                     className="nav-btn-primary px-4"
                   >
-                    Follow
+                    Hire
                   </button>
                 )}
                 {/* <button className="flex rounded w-[85px] me-4 text-xs h-[32px] justify-center items-center border border-foreground/50 text-foreground hover:bg-foreground/10 font-semibold transition-colors cursor-pointer">
                         Following
                       </button> */}
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                   <div className="">
                     {followers_count ?? 0}{" "}
                     {followers_count === 1 ? "Follower" : "Followers"}
                   </div>
                   <p className="text-foreground/60">•</p>
                   <div className="">{following_count ?? 0} Following</div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

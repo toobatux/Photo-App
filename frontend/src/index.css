@@ -87,11 +87,11 @@ p {
 }
 
 .btn-primary {
-  @apply h-[42px] rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background hover:bg-foreground/80 transition-colors cursor-pointer
+  @apply h-[42px] rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background hover:bg-foreground/80 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none
 } 
 
 .btn-secondary {
- @apply h-[42px] rounded-lg border border-foreground/10 px-4 py-2.5 text-sm font-medium text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors cursor-pointer
+ @apply h-[42px] rounded-lg border border-foreground/10 text-sm font-medium text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors cursor-pointer
 }
 
 .input-box {
@@ -99,15 +99,15 @@ p {
 }
 
 .nav-btn-primary {
-  @apply flex h-[34px] items-center whitespace-nowrap rounded-lg bg-foreground text-sm font-medium text-background hover:bg-foreground/80 transition-colors cursor-pointer
+  @apply flex h-[32px] items-center whitespace-nowrap rounded-lg bg-foreground text-sm font-medium text-background hover:bg-foreground/80 transition-colors cursor-pointer
 }
 
 .nav-btn-secondary-outlined {
-  @apply flex h-[34px] items-center whitespace-nowrap rounded-lg border border-foreground/10 text-sm font-medium text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors cursor-pointer
+  @apply flex h-[32px] items-center whitespace-nowrap rounded-lg border border-foreground/10 text-sm font-medium text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors cursor-pointer
 }
 
 .btn-destructive-outlined {
-  @apply flex h-[42px] items-center whitespace-nowrap rounded-lg border border-red-500/20 text-sm font-medium text-red-500/70 hover:bg-red-500/5 hover:text-red-500 transition-colors cursor-pointer
+  @apply flex h-[42px] items-center whitespace-nowrap rounded-lg border border-red-500/20 text-sm font-medium text-red-600 dark:text-red-500 hover:bg-red-500/5 hover:text-red-600 transition-colors cursor-pointer
 }
 
 .nav-btn-secondary {

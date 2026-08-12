@@ -39,7 +39,6 @@ const Modal = ({
         <span className="sr-only">Close modal</span>
         <div
           onClick={(e) => e.stopPropagation()}
-          onScroll={handleScroll}
           id="modal"
           className={`
         w-full overflow-clip
@@ -49,10 +48,10 @@ const Modal = ({
         ${size === "xl" ? "max-w-5xl" : ""}
       `}
         >
-          <div className="bg-background rounded-2xl shadow-lg max-h-[85vh] overflow-y-auto mx-2">
+          <div onScroll={handleScroll} className="bg-background rounded-2xl shadow-lg max-h-[85vh] overflow-y-auto mx-2">
           {header && (
             <div
-              className={`flex sticky top-0 z-20 bg-background w-full justify-between items-center font-semibold p-4 md:p-6 ${isScrolled ? "shadow dark:shadow-lg transition-shadow" : "border-b border-foreground/5"}`}
+              className={`flex sticky top-0 z-20 bg-background w-full justify-between items-center font-semibold p-4 md:p-6 ${isScrolled ? "shadow-lg transition-shadow" : "border-b border-foreground/5"}`}
             >
               {header}
               <button

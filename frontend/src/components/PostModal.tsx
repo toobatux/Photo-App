@@ -1,9 +1,5 @@
 import { Link } from "react-router";
 import { createPortal } from "react-dom";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
 import CloseIcon from "@mui/icons-material/Close";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
@@ -15,6 +11,8 @@ import useModal from "../hooks/useModal";
 import { customFetch } from "../services/api";
 import useToast from "../hooks/useToast";
 import Toast from "./Toast";
+import { LikeButton } from "./LikeButton";
+import { SaveButton } from "./SaveButton";
 
 const PostModal = ({
   selectedPost,
@@ -23,27 +21,25 @@ const PostModal = ({
   postModal,
   user,
   onPostUpdate,
-  showDeleteToast
+  showDeleteToast,
+  onDelete
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(
+    selectedPost.is_saved ? selectedPost.is_saved : false,
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [caption, setCaption] = useState(
     selectedPost.caption ? selectedPost.caption : null,
   );
-  const [isPublic, setIsPublic] = useState(true);
+  const [isPublic, setIsPublic] = useState(
+    selectedPost.public ? selectedPost.public : true,
+  );
   const [loading, setLoading] = useState(false);
   const deleteModal = useModal();
   const { toast, setToast, showToast } = useToast();
 
-  const handleToggleLiked = () => {
-    setIsLiked((prev) => !prev);
-    if (isLiked) {
-      showToast("Like removed", "success");
-    } else {
-      showToast("Liked post", "success");
-    }
-  };
+  console.log(selectedPost);
+
   const handleToggleSaved = () => {
     setIsSaved((prev) => !prev);
     if (isSaved) {
@@ -53,24 +49,38 @@ const PostModal = ({
     }
   };
 
-  const handleDelete = () => {
-    deleteModal.close();
-    postModal.close();
-    showDeleteToast("Post deleted successfully", "success");
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+
+      const data = await customFetch(`/api/posts/${selectedPost.id}/delete/`, {
+        method: "DELETE"
+      });
+
+      onDelete(selectedPost.id);
+      deleteModal.close();
+      postModal.close();
+      showDeleteToast("Post deleted successfully", "success");
+    } catch (error) {
+      showDeleteToast("Failed to delete post", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedPost.caption === caption) { 
-      setIsEditing(false); 
-      return; 
-    };
+    if (selectedPost.caption === caption && selectedPost.public === isPublic) {
+      setIsEditing(false);
+      return;
+    }
 
     setLoading(true);
 
     try {
       const formData = new FormData();
       formData.append("caption", caption);
+      formData.append("public", isPublic);
 
       const updatedPost = await customFetch(
         `/api/posts/${selectedPost.id}/update/`,
@@ -82,7 +92,7 @@ const PostModal = ({
 
       console.log("Updated post", updatedPost);
       showToast("Post updated successfully", "success");
-      
+
       if (onPostUpdate) {
         onPostUpdate(updatedPost);
       }
@@ -121,7 +131,7 @@ const PostModal = ({
       size="xl"
       header={headerContent}
     >
-      {toast && <Toast toast={toast} setToast={setToast}/>}
+      {toast && <Toast toast={toast} setToast={setToast} />}
       <div className="flex flex-col w-full pt-4">
         {/* Post image */}
         <div className="relative flex w-full h-full px-4 md:px-6 max-h-[60vh] min-h-[300px] items-stretch justify-center">
@@ -186,8 +196,9 @@ const PostModal = ({
                 </label>
                 <input
                   type="checkbox"
-                  name="caption"
-                  value={selectedPost.caption}
+                  name="public"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic((prev) => !prev)}
                 />
               </div>
 
@@ -203,7 +214,7 @@ const PostModal = ({
                   <button
                     type="button"
                     onClick={() => setIsEditing(false)}
-                    className="btn-secondary"
+                    className="btn-secondary px-4"
                   >
                     Cancel
                   </button>
@@ -223,33 +234,34 @@ const PostModal = ({
                 <div className="text-sm mb-4">{selectedPost.caption}</div>
               )}
 
-              <div className="flex w-full flex-wrap gap-2">
-                <button
-                  onClick={handleToggleLiked}
-                  className={`flex gap-2 nav-btn-secondary-outlined h-[34px] w-[34px] justify-center`}
-                >
-                  {isLiked ? (
-                    <FavoriteIcon fontSize="small" className="text-rose-500" />
-                  ) : (
-                    <FavoriteBorderIcon fontSize="small" />
+              <div className="flex w-full justify-between gap-2">
+                <div className="flex w-full flex-wrap gap-2">
+                  <LikeButton
+                    initialLiked={selectedPost.is_liked}
+                    totalLikes={selectedPost.total_likes}
+                    postId={selectedPost.id}
+                    showToast={showToast}
+                    isModal={true}
+                  />
+                  <SaveButton
+                    initialSaved={selectedPost.is_saved}
+                    postId={selectedPost.id}
+                    showToast={showToast}
+                    isModal={true}
+                  />
+                  {user && user.user.username === selectedPost.username && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="flex nav-btn-secondary px-4"
+                    >
+                      Edit post
+                    </button>
                   )}
-                </button>
-                <button
-                  onClick={handleToggleSaved}
-                  className={`flex gap-2 nav-btn-secondary-outlined h-[34px] w-[34px] justify-center`}
-                >
-                  {isSaved ? (
-                    <BookmarkIcon fontSize="small" />
-                  ) : (
-                    <BookmarkBorderIcon fontSize="small" />
-                  )}
-                </button>
-                {user && user.user.username === selectedPost.username && (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="flex nav-btn-secondary px-4"
-                  >
-                    Edit post
+                </div>
+
+                {user && user.user.username !== selectedPost.username && (
+                  <button className="flex nav-btn-secondary-outlined px-4">
+                    Report
                   </button>
                 )}
               </div>
@@ -257,7 +269,7 @@ const PostModal = ({
               <div className="flex gap-2 items-center text-sm text-foreground/60 pt-4">
                 {user && user.user.username === selectedPost.username && (
                   <>
-                    <p>Public</p>
+                    <p>{selectedPost.public ? "Public" : "Private"}</p>
                     <p className="text-foreground/60">•</p>
                   </>
                 )}
@@ -291,11 +303,12 @@ const PostModal = ({
                 Are you sure you want to delete this post?
               </p>
               <div className="flex justify-end gap-2 mt-4">
-                <button onClick={deleteModal.close} className="btn-secondary">
+                <button onClick={deleteModal.close} className="btn-secondary px-4">
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
+                  disabled={loading}
                   className="btn-destructive-outlined px-4"
                 >
                   Delete

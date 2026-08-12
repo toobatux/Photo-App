@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Modal from "./Modal";
 // import { customFetch } from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -46,7 +46,7 @@ const LoginModal = ({ user, setUser, isOpen, onClose, showToast }) => {
                 <button onClick={onClose} className="btn-primary">Cancel</button>
               <button
                 onClick={handleLogout}
-                className="btn-secondary"
+                className="btn-secondary px-4"
               >
                 Sign out
               </button>
@@ -56,7 +56,7 @@ const LoginModal = ({ user, setUser, isOpen, onClose, showToast }) => {
         </div>
       ) : (
         <div className="flex flex-col gap-4 p-8">
-          <h1 className="text-lg font-semibold mb-4 text-center">Welcome back</h1>
+          <h1 className="text-2xl font-semibold mb-4 text-center lobster-regular">Welcome back</h1>
           <form onSubmit={handleLogin} className="flex flex-col gap-2">
             <input
               type="text"
@@ -79,7 +79,7 @@ const LoginModal = ({ user, setUser, isOpen, onClose, showToast }) => {
               Continue
             </button>
           </form>
-          <p className="pt-4 text-sm text-center">Don't have an account? <span>Sign up</span></p>
+          <p className="pt-4 text-sm text-center">Don't have an account? <Link to="/sign-up" onClick={onClose} className="underline">Sign up</Link></p>
         </div>
       )}
     </Modal>

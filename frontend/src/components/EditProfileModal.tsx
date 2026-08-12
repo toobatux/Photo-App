@@ -80,11 +80,11 @@ const EditProfileModal = ({ isOpen, onClose, user, setUser, showToast, onUpdate 
     <Modal isOpen={isOpen} onClose={onClose} size="lg" header={"Edit Profile"}>
       <div className="flex flex-col relative">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6">
-          <div className="flex w-full h-full gap-4 pb-4">
+          <div className="flex flex-wrap-reverse sm:flex-nowrap w-full h-full gap-4 pb-4">
             <div className="flex flex-col gap-4 w-full h-full mt-auto">
               <label className="text-sm">Profile picture</label>
               <p className="text-sm text-foreground/70">Recommended 300x300</p>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
                   onClick={handleButtonClick}
@@ -111,7 +111,7 @@ const EditProfileModal = ({ isOpen, onClose, user, setUser, showToast, onUpdate 
             <div className="flex w-full h-full justify-center">
               {previewURL ? (
                 <img
-                  className="rounded-full shadow shadow-black/40 bg-foreground/10 w-[110px] h-[110px] object-cover"
+                  className="rounded-full shadow shadow-black/40 bg-foreground/10 w-[110px] h-[110px] min-w-[110px] object-cover"
                   src={previewURL}
                   alt="preview"
                 />
