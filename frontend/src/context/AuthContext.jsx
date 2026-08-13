@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
   const checkAuthStatus = async () => {
     try {
       // 1. Refresh or initialize Django's security token
-      // await customFetch("/api/csrf/");
+      await customFetch("/api/csrf/");
 
       // 2. Ask Django for the profile belonging to the current session cookie
       const userData = await customFetch("/api/users/me/");
