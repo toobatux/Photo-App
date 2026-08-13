@@ -23,6 +23,8 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListAPIView
 from .pagination import ArrayPageNumberPagination
 from rest_framework.generics import CreateAPIView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Post, Gallery
 from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
@@ -51,6 +53,7 @@ class SignupView(CreateAPIView):
             headers=headers
         )
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = [SessionAuthentication] 
