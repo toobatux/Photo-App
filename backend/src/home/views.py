@@ -63,6 +63,7 @@ class LoginView(APIView):
 
         if user is not None:
             login(request, user)
+            request.session.modified = True
             print("Generated Session Key:", request.session.session_key)
             return Response({'detail': 'Successfully logged in'}, status=status.HTTP_200_OK)
         
@@ -83,7 +84,7 @@ class CurrentUserView(APIView):
         print(f"User Object: {request.user}")
         print(f"Auth Class: {request.successful_authenticator}")
 
-        profile = request.user.profile
+        profile, created = Profile.objects.get_or_create(user=request.user)
         serializer = ProfileSerializer(profile, context={'request': request})
 
         return Response(serializer.data)

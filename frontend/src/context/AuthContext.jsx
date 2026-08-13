@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
   const checkAuthStatus = async () => {
     try {
       // 1. Refresh or initialize Django's security token
-      await customFetch("/api/csrf/");
+      // await customFetch("/api/csrf/");
 
       // 2. Ask Django for the profile belonging to the current session cookie
       const userData = await customFetch("/api/users/me/");
@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       // 4. If the cookie is expired, missing, or Django returns 401/403,
       // clear the user state to log them out cleanly
-      console.log("User is not logged in / Session invalid");
+      console.log("Auth check failed:", err);
       setUser(null);
       return null;
     } finally {
