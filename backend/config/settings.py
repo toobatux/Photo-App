@@ -51,9 +51,9 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://photo-app-delta-ashen.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://photo-app-delta-ashen.vercel.app",
 ]
 
 # Application definition
@@ -194,9 +194,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Define the URL prefix for media files
 # MEDIA_URL = '/media/'
 
-SESSION_COOKIE_SECURE = False   # True instantly drops cookies on http://localhost
-CSRF_COOKIE_SECURE = False      # True instantly drops CSRF on http://localhost
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+
+SESSION_COOKIE_SECURE = True 
+SESSION_COOKIE_SAMESITE = 'None'
 
 # AWS S3 Settings
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
