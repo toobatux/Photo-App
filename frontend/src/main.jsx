@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
         <Route element={<RootLayout/>}>
           {/* <Route path="/" element={<App />} /> */}
           <Route path="/" element={<Feed />} />
-          <Route path="/:username" element={<Profile />} />
+          <Route path="/profile/:username" element={<Profile />} />
           <Route path="/galleries/:galleryId" element={<Gallery />} />
           <Route path="/sign-up" element={<Signup />} />
         </Route>
