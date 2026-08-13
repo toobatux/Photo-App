@@ -56,7 +56,7 @@ class SignupView(CreateAPIView):
 @method_decorator(csrf_exempt, name='dispatch')
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = [SessionAuthentication] 
+    # authentication_classes = [SessionAuthentication] 
 
     def post(self, request):
         username = request.data.get('username')
