@@ -31,7 +31,7 @@ const EditGalleryModal = ({
       });
 
       deleteModal.close()
-      navigate(`/${user.user.username}`)
+      navigate(`/profile/${user.user.username}`)
       onClose();
       showToast("Gallery deleted successfully", "success");
     } catch (error) {

@@ -10,7 +10,7 @@ const ProfileModal = ({username, isOpen, onClose, handleLogout}) => {
     <Dropdown isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col p-1 w-42">
         <Link
-          to={`/${username}`}
+          to={`/profile/${username}`}
           onClick={onClose}
           className="flex gap-3 p-2 items-center hover:bg-foreground/5 rounded-lg select-none"
         >

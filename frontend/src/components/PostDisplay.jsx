@@ -71,7 +71,7 @@ const PostDisplay = ({
                   <div className="hidden group-hover:flex transition-opacity items-center absolute top-2 left-2 right-2 p-2">
                     <div className="flex w-full h-full items-end text-sm">
                       <Link
-                        to={`/${post.username}`}
+                        to={`/profile/${post.username}`}
                         className="flex items-center gap-4"
                       >
                         <div className="relative min-w-6 min-h-6 rounded-full">

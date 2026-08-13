@@ -109,7 +109,7 @@ const PostModal = ({
 
   const headerContent = (
     <Link
-      to={`/${selectedPost.username}`}
+      to={`/profile/${selectedPost.username}`}
       className="flex w-fit items-center gap-4 text-sm group cursor-pointer"
     >
       <div className="relative">

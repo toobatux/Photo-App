@@ -73,7 +73,7 @@ export function Gallery() {
               <div className="text-sm text-foreground/70">
                 Created by{" "}
                 <Link
-                  to={`/${gallery.username}`}
+                  to={`/profile/${gallery.username}`}
                   className="underline hover:text-foreground"
                 >
                   {gallery.photographer}
