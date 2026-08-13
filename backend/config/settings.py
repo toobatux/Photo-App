@@ -216,6 +216,7 @@ AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
 # AWS S3 Options
 AWS_S3_FILE_OVERWRITE = False  # Appends random hash if file names conflict
 AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
 
 STORAGES = {
   'default': {

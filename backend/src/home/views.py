@@ -21,6 +21,13 @@ from .pagination import ArrayPageNumberPagination
 from rest_framework.generics import CreateAPIView
 from .models import Post, Gallery
 from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from botocore.exceptions import BotoCoreError, ClientError
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SignupView(CreateAPIView):
     permission_classes = [AllowAny]
@@ -81,20 +88,63 @@ class ProfileAPIView(APIView):
         return Response(context, status=status.HTTP_200_OK)
 
 class ProfileUpdateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    # permission_classes = [IsAuthenticated]
+    # parser_classes = [MultiPartParser, FormParser]
 
-    def patch(self, request):
-        profile = request.user.profile
-        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+    # def patch(self, request):
+    #     profile = request.user.profile
+    #     serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
         
-        if serializer.is_valid():
+    #     if serializer.is_valid():
+    #         updated_profile = serializer.save()
+    #         return Response(
+    #             ProfileSerializer(updated_profile, context={'request': request}).data, 
+    #             status=status.HTTP_200_OK
+    #         )
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def patch(self, request):
+        # 1. Catch missing Profile object
+        try:
+            profile, _ = Profile.objects.get_or_create(user=request.user)
+        except Exception as e:
+            logger.error(f"Profile retrieval error for user {request.user.id}: {e}")
+            return Response(
+                {"error": "Could not retrieve or create profile for this user."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # 2. Validate serializer fields
+        serializer = ProfileSerializer(
+            profile, 
+            data=request.data, 
+            partial=True, 
+            context={'request': request}
+        )
+        
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # 3. Catch S3 upload and Database save errors
+        try:
             updated_profile = serializer.save()
             return Response(
                 ProfileSerializer(updated_profile, context={'request': request}).data, 
                 status=status.HTTP_200_OK
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except (BotoCoreError, ClientError) as s3_err:
+            # S3 / AWS permission/connection failures
+            logger.error(f"S3 Upload Failed: {s3_err}", exc_info=True)
+            return Response(
+                {"error": "Failed to upload image to cloud storage. Please check S3 settings."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        except Exception as e:
+            # Any other unexpected backend failure
+            logger.error(f"Profile update error: {e}", exc_info=True)
+            return Response(
+                {"error": f"An unexpected error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class PostListAPIView(ListAPIView):
