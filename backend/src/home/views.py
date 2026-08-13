@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate, login, logout
-
+import traceback
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -84,10 +84,34 @@ class CurrentUserView(APIView):
         print(f"User Object: {request.user}")
         print(f"Auth Class: {request.successful_authenticator}")
 
-        profile, created = Profile.objects.get_or_create(user=request.user)
-        serializer = ProfileSerializer(profile, context={'request': request})
+        # profile, created = Profile.objects.get_or_create(user=request.user)
+        # serializer = ProfileSerializer(profile, context={'request': request})
 
-        return Response(serializer.data)
+        # return Response(serializer.data)
+        try:
+            # Step A: Database lookup
+            print("--> Step A: Getting/creating profile...")
+            profile, created = Profile.objects.get_or_create(user=request.user)
+            print(f"--> Step A Success: Profile ID is {profile.id}")
+
+            # Step B: Initialize Serializer
+            print("--> Step B: Initializing ProfileSerializer...")
+            serializer = ProfileSerializer(profile, context={'request': request})
+
+            # Step C: Evaluate .data (this actually runs the serialization)
+            print("--> Step C: Building serializer.data...")
+            data = serializer.data
+            print("--> Step C Success!")
+
+            return Response(data)
+
+        except Exception as e:
+            print("❌ CRASH IN CURRENTUSERVIEW ❌")
+            print(traceback.format_exc())  # 👈 Prints full Python traceback in Railway
+            return Response(
+                {"error": str(e), "traceback": traceback.format_exc()},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class FeedAPIView(APIView):
     # permission_classes = [IsAuthenticated]
