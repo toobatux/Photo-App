@@ -28,8 +28,10 @@ from .models import Post, Gallery
 from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
 
 # Gives React initial CSRF token
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class CSRFTokenView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     @method_decorator(ensure_csrf_cookie)
     def get(self, request):
