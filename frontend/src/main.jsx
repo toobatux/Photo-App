@@ -16,8 +16,8 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route element={<RootLayout/>}>
-          <Route path="/" element={<App />} />
-          <Route path="/feed" element={<Feed />} />
+          {/* <Route path="/" element={<App />} /> */}
+          <Route path="/" element={<Feed />} />
           <Route path="/:username" element={<Profile />} />
           <Route path="/galleries/:galleryId" element={<Gallery />} />
           <Route path="/sign-up" element={<Signup />} />
