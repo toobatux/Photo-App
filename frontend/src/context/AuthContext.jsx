@@ -61,7 +61,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await customFetch("/api/token/", {
         method: "POST",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(credentials),
       });
 
       // Save JWT access and refresh tokens in browser storage
