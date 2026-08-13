@@ -129,6 +129,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -137,7 +138,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL', 'postgres://postgres:postgres@127.0.0.1:5432/photoapp_db'),
         conn_max_age=600,
-        ssl_require=True if os.getenv('DATABASE_URL') else False
+        ssl_require=not DEBUG
     )
 }
 

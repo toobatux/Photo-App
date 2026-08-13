@@ -21,10 +21,10 @@ const ProfileSkeleton = () => {
                 <div className="flex flex-wrap items-center gap-4 text-xs mt-4">
                   {/* Follow button */}
                   <div className="nav-btn-primary px-4 w-18 h-8.5 pointer-events-none select-none">
-                    Follow
+                    Hire
                   </div>
 
-                  <div className="flex gap-2">
+                  {/* <div className="flex gap-2">
                     <div className="flex gap-1">
                       <div className="h-4 w-6 rounded bg-foreground/10 animate-pulse"></div>
                       Followers
@@ -34,7 +34,7 @@ const ProfileSkeleton = () => {
                       <div className="h-4 w-6 rounded bg-foreground/10 animate-pulse"></div>
                       Following
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
