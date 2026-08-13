@@ -79,9 +79,9 @@ class CurrentUserView(APIView):
 
     def get(self, request):
         # --- LOG DEBUG HERE ---
-        # print("--- RUNNING CURRENTUSERVIEW ---")
-        # print(f"User Object: {request.user}")
-        # print(f"Auth Class: {request.successful_authenticator}")
+        print("--- RUNNING CURRENTUSERVIEW ---")
+        print(f"User Object: {request.user}")
+        print(f"Auth Class: {request.successful_authenticator}")
 
         profile = request.user.profile
         serializer = ProfileSerializer(profile, context={'request': request})
