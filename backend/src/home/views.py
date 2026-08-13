@@ -23,8 +23,6 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListAPIView
 from .pagination import ArrayPageNumberPagination
 from rest_framework.generics import CreateAPIView
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import Post, Gallery
 from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
@@ -53,10 +51,9 @@ class SignupView(CreateAPIView):
             headers=headers
         )
 
-@method_decorator(csrf_exempt, name='dispatch')
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    # authentication_classes = [SessionAuthentication] 
+    authentication_classes = [] 
 
     def post(self, request):
         username = request.data.get('username')
@@ -371,7 +368,6 @@ class BulkUploadAPIView(APIView):
         #{len(created_posts)} 
 
 
-@login_required(login_url="/login")
 def search(request):
     query = ''
     results = []
@@ -395,7 +391,6 @@ def search(request):
 
     return render(request, 'home/results.html', context)
 
-@login_required(login_url="/login/")
 def following_list(request, user_id):
     current_user_profile = get_object_or_404(Profile, pk=user_id)
     following = current_user_profile.follows.all()
@@ -409,7 +404,6 @@ def following_list(request, user_id):
 
     return render(request, "home/following_list.html", {'profile': current_user_profile, 'following': following, 'followers': followers})
 
-@login_required(login_url="/login/")
 def follower_list(request, user_id):
     current_user_profile = get_object_or_404(Profile, pk=user_id)
     followers = current_user_profile.followed_by.all()
@@ -449,7 +443,6 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Post updated successfully!')
         return super().form_valid(form)
     
-@login_required(login_url="/login/")
 def results_profile(request, user_id):
     profile = get_object_or_404(Profile, pk=user_id)
     post_count = profile.posts.count()
@@ -465,21 +458,17 @@ def results_profile(request, user_id):
 
     return render(request, "home/results_profile.html", context)
 
-@login_required(login_url="/login/")
 def settings_page(request):
     return render(request, "home/settings.html")
 
-@login_required(login_url="/login/")
 def saved_posts(request):
     saved_posts = request.user.profile.saved_posts.all() # fix
     return render(request, "home/saved_posts.html", {'saved_posts': saved_posts})
 
-@login_required(login_url="/login/")
 def liked_posts(request):
     liked_posts = request.user.liked_posts.all().order_by('-created_on')
     return render(request, "home/liked_posts.html", {'liked_posts': liked_posts})
 
-@login_required(login_url="/login/")
 def follow_user(request, user_id):
     profile_to_follow = get_object_or_404(Profile, pk=user_id)
     current_user = request.user.profile
@@ -502,7 +491,6 @@ def follow_user(request, user_id):
     return HttpResponseRedirect(redirect_url)
     #return redirect(reverse('index'))
 
-@login_required(login_url="/login/")
 def follow_user_index(request):
     if request.method == 'POST':
         profile_to_follow = get_object_or_404(Profile, id=request.POST.get('user_id'))
@@ -527,7 +515,6 @@ def follow_user_index(request):
         return JsonResponse({'follows': follows, 'followers_count': followers_count})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-@login_required(login_url="/login/")
 def notifications_page(request):
     notifications = Notification.objects.filter(receiver=request.user.profile).order_by('-created_on')
     today = timezone.localtime().date()
