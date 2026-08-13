@@ -7,51 +7,24 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. Give Django a quick moment to ensure CSRF is initialized,
-  // then fetch the current logged-in user profile
   const initAuth = async () => {
-    try {
-      await customFetch("/api/csrf/");
-      const userData = await customFetch("/api/users/me/");
-      setUser(userData);
-      return userData;
-    } catch (err) {
-      console.log("User is not logged in");
-      setUser(null); // Set to null if 401/403 (unauthenticated)
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+    const token = localStorage.getItem("accessToken");
+  if (!token) {
+    setUser(null);
+    setLoading(false);
+    return null;
+  }
 
-  useEffect(() => {
-    initAuth();
-  }, []);
-
-  const checkAuthStatus = async () => {
+  // 2. Fetch current logged-in user profile using the JWT
   try {
     const userData = await customFetch("/api/users/me/");
-
-    // Save CSRF token in memory for header injection
-    // if (userData?.csrfToken) {
-    //   setCsrfToken(userData.csrfToken);
-    // }
-
-    // 🔍 DEBUG LOG 3
-    console.log("[AuthCheck] Received user data from Django:", userData);
-    console.log("[AuthCheck] Extracted csrfToken:", userData?.csrfToken);
-
-    if (userData?.csrfToken) {
-      setCsrfToken(userData.csrfToken);
-      console.log("[AuthCheck] Successfully called setCsrfToken!");
-    } else {
-      console.warn("[AuthCheck] ⚠️ No csrfToken found in response JSON!");
-    }
-
     setUser(userData);
     return userData;
   } catch (err) {
-    console.error("Session check failed:", err);
+    console.log("User token is invalid or expired");
+    // Clean up stale tokens if request fails (401/403)
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     setUser(null);
     return null;
   } finally {
@@ -59,15 +32,41 @@ export function AuthProvider({ children }) {
   }
 };
 
+  useEffect(() => {
+    initAuth();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const userData = await customFetch("/api/users/me/");
+      setUser(userData);
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 3. Define an explicit login function to be called by your form
   const login = async (credentials) => {
     setLoading(true);
     try {
-      // First, hit your login endpoint
-      await customFetch("/api/login/", {
-        method: "POST",
-        body: JSON.stringify(credentials),
+      const data = await customFetch('/api/token/', {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
       });
+
+      // Save JWT access and refresh tokens in browser storage
+      localStorage.setItem('accessToken', data.access);
+      localStorage.setItem('refreshToken', data.refresh);
 
       // Immediately pull the fresh user details right after a successful 200 OK login
       await checkAuthStatus();
@@ -85,6 +84,8 @@ export function AuthProvider({ children }) {
       });
 
       // Clear the user state on the frontend
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       setUser(null);
     } catch (error) {
       console.error("Logout failed:", error.message);
@@ -98,7 +99,7 @@ export function AuthProvider({ children }) {
       setUser,
       loading,
       login,
-      logout
+      logout,
     }),
     [user, loading],
   );

@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,7 +76,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',             
     'django.middleware.csrf.CsrfViewMiddleware',             
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -85,11 +86,17 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.JWTAuthentication',
   ],
   'DEFAULT_PERMISSION_CLASSES': [
     'rest_framework.permissions.IsAuthenticated',
   ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),   # 1 day access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # 7 days refresh token
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # Allows the browser to send cookies (session ID & CSRF token)

@@ -2,40 +2,25 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse
 from .models import Profile, Post, Notification
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from .forms import SearchForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib import messages
 from django.utils import timezone
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.utils.decorators import method_decorator
-from django.contrib.auth import authenticate, login, logout
-from django.middleware.csrf import get_token
+from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.authentication import SessionAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.generics import ListAPIView
 from .pagination import ArrayPageNumberPagination
 from rest_framework.generics import CreateAPIView
-
 from .models import Post, Gallery
 from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
-
-# Gives React initial CSRF token
-@method_decorator(ensure_csrf_cookie, name='dispatch')
-class CSRFTokenView(APIView):
-    permission_classes = [AllowAny]
-    authentication_classes = []
-
-    @method_decorator(ensure_csrf_cookie)
-    def get(self, request):
-        return Response({'csrfToken': get_token(request)})
 
 class SignupView(CreateAPIView):
     permission_classes = [AllowAny]
@@ -53,64 +38,22 @@ class SignupView(CreateAPIView):
             headers=headers
         )
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-    authentication_classes = [] 
-
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            request.session.modified = True
-            print("Generated Session Key:", request.session.session_key)
-            return Response({'detail': 'Successfully logged in'}, status=status.HTTP_200_OK)
-        
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-    
 class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response({'detail': 'Successfully logged out'}, status=status.HTTP_200_OK)
 
 class CurrentUserView(APIView):
-    authentication_classes = [SessionAuthentication] 
+    authentication_classes = [JWTAuthentication] 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # --- LOG DEBUG HERE ---
-        print("--- RUNNING CURRENTUSERVIEW ---")
-        print(f"User Object: {request.user}")
-        print(f"Auth Class: {request.successful_authenticator}")
-
         profile, _ = Profile.objects.get_or_create(user=request.user)
         serializer = ProfileSerializer(profile, context={'request': request})
-        
         data = serializer.data
-        data['csrfToken'] = get_token(request)  # 👈 Pass token in response JSON
         return Response(data)
 
 class FeedAPIView(APIView):
-    # permission_classes = [IsAuthenticated]
-
-    # def get(self, request):
-    #     user_profile = request.user.profile
-    #     following_profiles = user_profile.follows.all()
-
-    #     following_posts = Post.objects.filter(author__in=following_profiles).order_by('-created_on')
-    #     not_following_posts = Post.objects.exclude(author__in=following_profiles).filter(public=True).order_by('-created_on')
-        
-    #     # serialize the lists
-    #     following_serializer = PostSerializer(following_posts, many=True, context={'request': request})
-    #     not_following_serializer = PostSerializer(not_following_posts, many=True, context={'request': request})
-
-    #     return Response({
-    #         'following_posts': following_serializer.data,
-    #         'not_following_posts': not_following_serializer.data
-    #     }, status=status.HTTP_200_OK)
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -124,20 +67,15 @@ class FeedAPIView(APIView):
 
 class ProfileAPIView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, username):
         profile = get_object_or_404(Profile, user__username=username)
-        # post_count = profile.posts.count()
-        # profile_posts = Post.objects.filter(author = profile).order_by('-created_on')
 
         profile_serializer = ProfileSerializer(profile, context={'request': request})
-        # posts_serializer = PostSerializer(profile_posts, many=True, context={'request': request})
 
         context = {
             'profile': profile_serializer.data,
-            # 'post_count': post_count,
-            # 'profile_posts': posts_serializer.data,
         }
 
         return Response(context, status=status.HTTP_200_OK)

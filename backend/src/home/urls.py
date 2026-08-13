@@ -2,12 +2,16 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from .views import PostCreateView, PostUpdateView, FeedAPIView, ProfileAPIView
-from .views import CSRFTokenView, LoginView, LogoutView, CurrentUserView, PostCreateAPIView, ProfileUpdateAPIView, PostUpdateAPIView, PostDeleteAPIView, PostLikeAPIView, PostSaveAPIView, PostListAPIView, GalleryCreateAPIView, GalleryListAPIView, GalleryDetailAPIView, GalleryUpdateAPIView, GalleryDeleteAPIView, BulkUploadAPIView, SignupView
+from .views import LogoutView, CurrentUserView, PostCreateAPIView, ProfileUpdateAPIView, PostUpdateAPIView, PostDeleteAPIView, PostLikeAPIView, PostSaveAPIView, PostListAPIView, GalleryCreateAPIView, GalleryListAPIView, GalleryDetailAPIView, GalleryUpdateAPIView, GalleryDeleteAPIView, BulkUploadAPIView, SignupView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
-    path("api/csrf/", CSRFTokenView.as_view(), name="csrf"),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path("api/signup/", SignupView.as_view(), name="signup"),
-    path("api/login/", LoginView.as_view(), name="login"),
     path("api/logout/", LogoutView.as_view(), name="logout"),
     path("api/users/me/", CurrentUserView.as_view(), name="current-user"),
     path("api/feed/", FeedAPIView.as_view(), name="feed"),
