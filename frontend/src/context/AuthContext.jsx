@@ -33,8 +33,19 @@ export function AuthProvider({ children }) {
     const userData = await customFetch("/api/users/me/");
 
     // Save CSRF token in memory for header injection
+    // if (userData?.csrfToken) {
+    //   setCsrfToken(userData.csrfToken);
+    // }
+
+    // 🔍 DEBUG LOG 3
+    console.log("[AuthCheck] Received user data from Django:", userData);
+    console.log("[AuthCheck] Extracted csrfToken:", userData?.csrfToken);
+
     if (userData?.csrfToken) {
       setCsrfToken(userData.csrfToken);
+      console.log("[AuthCheck] Successfully called setCsrfToken!");
+    } else {
+      console.warn("[AuthCheck] ⚠️ No csrfToken found in response JSON!");
     }
 
     setUser(userData);

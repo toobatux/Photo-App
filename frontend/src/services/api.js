@@ -49,6 +49,21 @@ export async function customFetch(endpoint, options = {}) {
     options.headers["X-CSRFToken"] = csrfToken;
   }
 
+  // DEBUG
+  if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
+    console.log(`[customFetch] Mutating Request (${method} ${endpoint})`);
+    console.log(`[customFetch] CSRF Token Found in Memory:`, csrfToken);
+  }
+
+  if (csrfToken && !["GET", "HEAD", "OPTIONS"].includes(method)) {
+    options.headers["X-CSRFToken"] = csrfToken;
+  }
+
+  // 🔍 DEBUG LOG 2
+  console.log(`[customFetch] Final Outgoing Headers:`, options.headers);
+
+
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {
