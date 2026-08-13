@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { customFetch } from "../services/api";
+import { customFetch, setCsrfToken } from "../services/api";
 
 const AuthContext = createContext(null);
 
@@ -29,27 +29,24 @@ export function AuthProvider({ children }) {
   }, []);
 
   const checkAuthStatus = async () => {
-    try {
-      // 1. Refresh or initialize Django's security token
-      await customFetch("/api/csrf/");
+  try {
+    const userData = await customFetch("/api/users/me/");
 
-      // 2. Ask Django for the profile belonging to the current session cookie
-      const userData = await customFetch("/api/users/me/");
-
-      // 3. Save the profile data into React's global memory
-      setUser(userData);
-      return userData;
-    } catch (err) {
-      // 4. If the cookie is expired, missing, or Django returns 401/403,
-      // clear the user state to log them out cleanly
-      console.log("Auth check failed:", err);
-      setUser(null);
-      return null;
-    } finally {
-      // 5. Turn off the loading state so the UI knows the check is done
-      setLoading(false);
+    // Save CSRF token in memory for header injection
+    if (userData?.csrfToken) {
+      setCsrfToken(userData.csrfToken);
     }
-  };
+
+    setUser(userData);
+    return userData;
+  } catch (err) {
+    console.error("Session check failed:", err);
+    setUser(null);
+    return null;
+  } finally {
+    setLoading(false);
+  }
+};
 
   // 3. Define an explicit login function to be called by your form
   const login = async (credentials) => {
