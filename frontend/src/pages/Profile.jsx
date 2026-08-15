@@ -225,7 +225,7 @@ export function Profile() {
             </div>
           </div>
 
-          <div className="flex flex-col md:gap-6 pt-6">
+          <div className="flex flex-col gap-6 pt-6">
             {showPhotoDisplay ? (
               <>
                 {user && user.name === profile.name && <NewPhotoButton isPrimary={false}/>}
