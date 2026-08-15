@@ -62,7 +62,7 @@ const Navbar = () => {
       >
         {/* <div className="sticky top-0 z-40 flex w-full h-[60px] bg-[#181818] p-4 border-b border-white/5"> */}
         <div className="flex relative w-full max-w-5xl items-center justify-between gap-4 m-auto">
-          <Link to={"/feed"} className="lobster-regular">
+          <Link to={"/"} className="lobster-regular">
             <b className="hidden md:flex">ShowMe</b>
             <b className={`flex md:hidden`}>SM</b>
           </Link>
