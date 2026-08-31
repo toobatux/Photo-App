@@ -24,7 +24,14 @@ export async function customFetch(endpoint, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.detail || errorData.error || "Request failed");
+
+    const message =
+    errorData.detail ||
+    errorData.error ||
+    (typeof errorData === "string" ? errorData : null) ||
+    `Error ${response.status}: ${response.statusText}`;
+
+    throw new Error(message);
   }
 
   const contentType = response.headers.get("content-type");

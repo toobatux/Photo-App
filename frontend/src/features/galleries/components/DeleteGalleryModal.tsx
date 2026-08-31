@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
-import Modal from "./Modal";
+import Modal from "../../../components/Modal";
 import { useState } from "react";
-import { customFetch } from "../services/api";
+import { customFetch } from "../../../services/api";
 
 const DeleteGalleryModal = ({isOpen, onClose, onDelete}) => {
   const [loading, setLoading] = useState(false);

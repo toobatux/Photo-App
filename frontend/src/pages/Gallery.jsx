@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { customFetch } from "../services/api";
 import AddIcon from "@mui/icons-material/Add";
 import useModal from "../hooks/useModal";
-import AddPhotosModal from "../components/AddPhotosModal";
+import AddPhotosModal from "../features/galleries/components/AddPhotosModal";
 import useToast from "../hooks/useToast";
 import Toast from "../components/Toast";
-import EditGalleryModal from "../components/EditGalleryModal";
-import GalleryPhotoList from "../components/GalleryPhotoList";
+import EditGalleryModal from "../features/galleries/components/EditGalleryModal";
+import GalleryPhotoList from "../features/galleries/components/GalleryPhotoList";
 
 export function Gallery() {
   const { galleryId } = useParams();

@@ -3,13 +3,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorIcon from "@mui/icons-material/Error";
 
-const Toast = ({ toast, setToast, isTop }) => {
+const Toast = ({ toast, setToast, isTop=false }) => {
   if (toast)
     return (
-      <div className={`fixed ${isTop ? "top-16" : "bottom-17"} right-0 left-0 z-50`}>
+      <div className={`fixed ${isTop ? "top-16" : "bottom-16"} right-0 left-0 z-50`}>
         <div className="max-w-5xl mx-auto w-full relative">
           <div
-            className={`absolute right-2 top-0 flex w-fit p-3 text-sm text-foreground shadow font-semibold rounded-xl bg-background border border-foreground/10`}
+            className={`absolute right-2 top-0 ms-2 flex w-fit p-3 text-sm text-foreground shadow font-semibold rounded-xl bg-background border border-foreground/10`}
           >
             <div className="flex items-center justify-between gap-6">
               <div className="flex gap-3 items-center">

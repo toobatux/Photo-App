@@ -1,16 +1,13 @@
 import { Link } from "react-router";
 import { createPortal } from "react-dom";
-import CloseIcon from "@mui/icons-material/Close";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-// import FavoriteIcon from "@mui/icons-material/Favorite";
-// import useModal from "../hooks/useModal";
-import Modal from "../components/Modal";
-import { useEffect, useRef, useState } from "react";
-import useModal from "../hooks/useModal";
-import { customFetch } from "../services/api";
-import useToast from "../hooks/useToast";
-import Toast from "./Toast";
+import Modal from "../../../components/Modal";
+import { useState } from "react";
+import useModal from "../../../hooks/useModal";
+import { customFetch } from "../../../services/api";
+import useToast from "../../../hooks/useToast";
+import Toast from "../../../components/Toast";
 import { LikeButton } from "./LikeButton";
 import { SaveButton } from "./SaveButton";
 

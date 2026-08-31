@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import Modal from "./Modal";
+import Modal from "../../../components/Modal";
 // import { customFetch } from "../services/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { createPortal } from "react-dom";
 
 const LoginModal = ({ user, setUser, isOpen, onClose, showToast }) => {

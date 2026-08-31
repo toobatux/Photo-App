@@ -1,10 +1,10 @@
 import { useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { customFetch } from "../services/api";
-import LoginModal from "./LoginModal";
-import useModal from "../hooks/useModal";
-import { useAuth } from "../context/AuthContext";
+import { customFetch } from "../../../services/api";
+import LoginModal from "../../auth/components/LoginModal";
+import useModal from "../../../hooks/useModal";
+import { useAuth } from "../../../context/AuthContext";
 
 export function LikeButton({
   initialLiked,
@@ -39,7 +39,7 @@ export function LikeButton({
       }
     } catch (error) {
       setIsLiked(previousState);
-      showToast("Failed to like post", "error");
+      showToast("Failed to like post: " + error.message, "error");
       console.log(error);
     } finally {
       setIsLoading(false);

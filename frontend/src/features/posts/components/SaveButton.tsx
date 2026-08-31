@@ -1,10 +1,10 @@
 import { useState } from "react";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
-import { customFetch } from "../services/api";
-import useModal from "../hooks/useModal";
-import { useAuth } from "../context/AuthContext";
-import LoginModal from "./LoginModal";
+import { customFetch } from "../../../services/api";
+import useModal from "../../../hooks/useModal";
+import { useAuth } from "../../../context/AuthContext";
+import LoginModal from "../../auth/components/LoginModal";
 
 export function SaveButton({
   initialSaved,
@@ -36,7 +36,7 @@ export function SaveButton({
       }
     } catch (error) {
       setIsSaved(previousState);
-      showToast("Failed to save post", "error");
+      showToast("Failed to save post: " + error.message, "error");
     } finally {
       setIsLoading(false);
     }

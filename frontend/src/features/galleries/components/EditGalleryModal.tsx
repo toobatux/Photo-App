@@ -1,11 +1,11 @@
-import Modal from "./Modal";
+import Modal from "../../../components/Modal";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { customFetch } from "../services/api";
+import { customFetch } from "../../../services/api";
 import { useNavigate } from "react-router";
-import useModal from "../hooks/useModal";
+import useModal from "../../../hooks/useModal";
 import DeleteGalleryModal from "./DeleteGalleryModal";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
 const EditGalleryModal = ({
   isOpen,

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import Modal from "./Modal"
-import { customFetch } from "../services/api"
+import Modal from "../../../components/Modal";
+import { customFetch } from "../../../services/api"
 import { createPortal } from "react-dom";
 
 const NewPhotoModal = ({isOpen, onClose, showToast}) => {

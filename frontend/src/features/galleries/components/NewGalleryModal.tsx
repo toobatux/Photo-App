@@ -1,8 +1,11 @@
 import { useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import Modal from "./Modal";
-import { customFetch } from "../services/api";
+import Modal from "../../../components/Modal";
+import { customFetch } from "../../../services/api";
 import { createPortal } from "react-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { gallerySchema, type GalleryFormData } from "../schemas/gallery.schema";
 
 const NewGalleryModal = ({ isOpen, onClose, showToast }) => {
   const [loading, setLoading] = useState(false);
@@ -40,11 +43,16 @@ const NewGalleryModal = ({ isOpen, onClose, showToast }) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Handle Submit
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title) return alert("Please enter a title");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<GalleryFormData>({
+    resolver: zodResolver(gallerySchema),
+  });
 
+  // Handle Submit
+  const onSubmit = async (data: GalleryFormData) => {
     setLoading(true);
 
     try {
@@ -75,23 +83,22 @@ const NewGalleryModal = ({ isOpen, onClose, showToast }) => {
       header={"New Gallery"}
     >
       <div className="relative">
-        <form onSubmit={handleSubmit} className="space-y-5 p-4 md:p-6 h-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 p-4 md:p-6 h-full">
           {/* Title Input */}
           <div>
             <label
-              htmlFor="title"
-              className="block text-sm font-medium text-foreground/70 mb-2"
+              htmlFor="name"
+              className={`block text-sm font-medium mb-2 ${errors.name ? "text-red-500" : "text-foreground/70"}`}
             >
-              Title
+              Name
             </label>
             <input
+              {...register("name")}
               type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. self-portraits"
-              className="input-box"
+              placeholder="Self-portraits"
+              className={`${errors.name && "outline outline-red-500"} input-box`}
             />
+            {errors.name && <p className="text-sm text-red-500 pt-2">{errors.name.message}</p>}
           </div>
 
           <div className="flex justify-end gap-3 pt-4 mt-4 md:mt-6">

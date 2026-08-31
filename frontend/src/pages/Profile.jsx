@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import useModal from "../hooks/useModal";
-import PostModal from "../components/PostModal";
-import ProfileHeader from "../components/ProfileHeader";
-import PostDisplay from "../components/PostDisplay";
+import PostModal from "../features/posts/components/PostModal";
+import ProfileHeader from "../features/profile/components/ProfileHeader";
+import PostDisplay from "../features/posts/components/PostDisplay";
 import { useAuth } from "../context/AuthContext";
-import ProfileSkeleton from "../components/ProfileSkeleton";
+import ProfileSkeleton from "../features/profile/components/ProfileSkeleton";
 import useToast from "../hooks/useToast";
 import Toast from "../components/Toast";
 import { customFetch } from "../services/api";
 import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import PhotoLibraryOutlinedIcon from "@mui/icons-material/PhotoLibraryOutlined";
-import GalleryList from "../components/GalleryList";
-import NewGalleryButton from "../components/NewGalleryButton";
-import NewPhotoButton from "../components/NewPhotoButton";
+import GalleryList from "../features/galleries/components/GalleryList";
+import NewGalleryButton from "../features/galleries/components/NewGalleryButton";
+import NewPhotoButton from "../features/posts/components/NewPhotoButton";
 
 export function Profile() {
   const { username } = useParams();
@@ -179,7 +179,7 @@ export function Profile() {
 
   return (
     <>
-      <div className="flex relative flex-col w-full">
+      <div className="flex relative flex-col w-full min-h-screen">
         {/* Dynamic background gradient */}
         {/* <div
         style={{
@@ -187,9 +187,10 @@ export function Profile() {
         }}
         className="fixed -top-180 md:-top-160 left-0 right-0 w-full z-0 h-[1000px] bg-background pointer-events-none"
       /> */}
-        {toast && <Toast toast={toast} setToast={setToast} />}
 
-        <div className="flex flex-col z-10">
+         {toast && <Toast toast={toast} setToast={setToast} />}
+
+        <div className="flex flex-col z-10">    
           <ProfileHeader
             user={user}
             photoModal={photoModal}

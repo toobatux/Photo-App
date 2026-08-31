@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useModal from "../hooks/useModal";
-import PostModal from "../components/PostModal";
-import PostDisplay from "../components/PostDisplay";
+import PostModal from "../features/posts/components/PostModal";
+import PostDisplay from "../features/posts/components/PostDisplay";
 import { useAuth } from "../context/AuthContext";
 import { customFetch } from "../services/api";
 import useToast from "../hooks/useToast";

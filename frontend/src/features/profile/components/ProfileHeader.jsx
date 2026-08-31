@@ -1,8 +1,8 @@
 import { useState } from "react";
-import useModal from "../hooks/useModal";
+import useModal from "../../../hooks/useModal";
 import EditProfileModal from "./EditProfileModal";
-import LoginModal from "./LoginModal";
-import { useAuth } from "../context/AuthContext";
+import LoginModal from "../../auth/components/LoginModal";
+import { useAuth } from "../../../context/AuthContext";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 

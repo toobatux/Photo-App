@@ -1,14 +1,9 @@
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { Link } from "react-router";
 import { LikeButton } from "./LikeButton";
 import { SaveButton } from "./SaveButton";
-import useToast from "../hooks/useToast";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { customFetch } from "../services/api";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { useEffect, useRef } from "react";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import NewPhotoButton from "./NewPhotoButton";
 
 const PostDisplay = ({

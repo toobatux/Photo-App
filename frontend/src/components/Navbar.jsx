@@ -3,25 +3,19 @@ import { Link } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import useModal from "../hooks/useModal";
-import Modal from "./Modal";
-import LoginModal from "./LoginModal";
+import LoginModal from "../features/auth/components/LoginModal";
 import Dropdown from "./Dropdown";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import PhotoLibraryOutlinedIcon from "@mui/icons-material/PhotoLibraryOutlined";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { useAuth } from "../context/AuthContext";
-import ProfileModal from "./ProfileModal";
+import ProfileModal from "../features/profile/components/ProfileModal";
 import useToast from "../hooks/useToast";
 import Toast from "./Toast";
-import NewPhotoModal from "./NewPhotoModal";
-import NewGalleryModal from "./NewGalleryModal";
+import NewPhotoModal from "../features/posts/components/NewPhotoModal";
+import NewGalleryModal from "../features/galleries/components/NewGalleryModal";
 
 const Navbar = () => {
   const [solidNav, setSolidNav] = useState(false);
-  const lastScrollY = useRef(0);
 
   const { user, setUser, loading } = useAuth();
   const { toast, setToast, showToast } = useToast();

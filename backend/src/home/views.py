@@ -1,9 +1,11 @@
+from .models import Profile, Post, Notification, Post, Gallery
+from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
+from .pagination import ArrayPageNumberPagination
+from .forms import SearchForm
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse
-from .models import Profile, Post, Notification
 from django.db.models import Q
 from django.urls import reverse_lazy, reverse
-from .forms import SearchForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib import messages
@@ -11,24 +13,18 @@ from django.utils import timezone
 from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.permissions import AllowAny
-from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.generics import ListAPIView
-from .pagination import ArrayPageNumberPagination
-from rest_framework.generics import CreateAPIView
-from .models import Post, Gallery
-from .serializers import PostSerializer, ProfileSerializer, GallerySerializer, SignUpSerializer
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.throttling import ScopedRateThrottle
 from botocore.exceptions import BotoCoreError, ClientError
 import logging
 
 logger = logging.getLogger(__name__)
 
+# Auth views ---------------------------
 class SignupView(CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = SignUpSerializer
@@ -53,6 +49,8 @@ class LogoutView(APIView):
 class CurrentUserView(APIView):
     authentication_classes = [JWTAuthentication] 
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'current_user'
 
     def get(self, request):
         profile, _ = Profile.objects.get_or_create(user=request.user)
@@ -71,7 +69,7 @@ class FeedAPIView(APIView):
             'posts': posts_serializer.data
         }, status=status.HTTP_200_OK)
 
-
+# Profile views ------------------------
 class ProfileAPIView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = [JWTAuthentication]
@@ -88,20 +86,9 @@ class ProfileAPIView(APIView):
         return Response(context, status=status.HTTP_200_OK)
 
 class ProfileUpdateAPIView(APIView):
-    # permission_classes = [IsAuthenticated]
-    # parser_classes = [MultiPartParser, FormParser]
-
-    # def patch(self, request):
-    #     profile = request.user.profile
-    #     serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
-        
-    #     if serializer.is_valid():
-    #         updated_profile = serializer.save()
-    #         return Response(
-    #             ProfileSerializer(updated_profile, context={'request': request}).data, 
-    #             status=status.HTTP_200_OK
-    #         )
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'sensitive_action'
+    
     def patch(self, request):
         # 1. Catch missing Profile object
         try:
@@ -146,7 +133,7 @@ class ProfileUpdateAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
+# Post views ---------------------------
 class PostListAPIView(ListAPIView):
     serializer_class = PostSerializer
     pagination_class = ArrayPageNumberPagination
@@ -206,6 +193,8 @@ class PostDeleteAPIView(APIView):
 
 class PostLikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'like_save'
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -228,6 +217,8 @@ class PostLikeAPIView(APIView):
 
 class PostSaveAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'like_save'
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -247,7 +238,7 @@ class PostSaveAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
-
+# Gallery views ------------------------
 class GalleryListAPIView(ListAPIView):
     serializer_class = GallerySerializer
     pagination_class = ArrayPageNumberPagination
@@ -410,47 +401,6 @@ def follower_list(request, user_id):
 
     return render(request, "home/follower_list.html", {'profile': current_user_profile, 'followers': followers, 'following': following})
 
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    fields = ['image', 'caption', 'public']
-    template_name = 'home/create_post.html'
-    success_url = reverse_lazy('index')
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user.profile
-        response = super().form_valid(form)
-
-        form.instance.save()
-
-        messages.success(self.request, 'Post created successfully!')
-        return response
-    
-class PostUpdateView(LoginRequiredMixin, UpdateView):
-    model = Post
-    fields = ['image', 'caption', 'public']
-    template_name = 'home/edit_post.html'
-    success_url = reverse_lazy('index')
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user.profile
-        messages.success(self.request, 'Post updated successfully!')
-        return super().form_valid(form)
-    
-def results_profile(request, user_id):
-    profile = get_object_or_404(Profile, pk=user_id)
-    post_count = profile.posts.count()
-    profile_posts = Post.objects.filter(author = profile).order_by('-created_on')
-    is_followed = profile.followed_by.filter(id=request.user.profile.id).exists()
-
-    context = {
-        'profile': profile,
-        'post_count': post_count,
-        'profile_posts': profile_posts,
-        'is_followed': is_followed,
-    }
-
-    return render(request, "home/results_profile.html", context)
-
 def settings_page(request):
     return render(request, "home/settings.html")
 
@@ -461,52 +411,6 @@ def saved_posts(request):
 def liked_posts(request):
     liked_posts = request.user.liked_posts.all().order_by('-created_on')
     return render(request, "home/liked_posts.html", {'liked_posts': liked_posts})
-
-def follow_user(request, user_id):
-    profile_to_follow = get_object_or_404(Profile, pk=user_id)
-    current_user = request.user.profile
-    follows = False
-
-    if profile_to_follow in current_user.follows.all():
-        current_user.follows.remove(profile_to_follow)
-        follows = False
-        Notification.objects.filter(sender=request.user.profile, receiver=profile_to_follow, notification_type='follow').delete()
-    else:
-        current_user.follows.add(profile_to_follow)
-        follows = True
-        Notification.objects.create(
-            sender=request.user.profile,
-            receiver= profile_to_follow,
-            notification_type='follow',
-        )
-
-    redirect_url = reverse('profile', args=[user_id])
-    return HttpResponseRedirect(redirect_url)
-    #return redirect(reverse('index'))
-
-def follow_user_index(request):
-    if request.method == 'POST':
-        profile_to_follow = get_object_or_404(Profile, id=request.POST.get('user_id'))
-        current_user = request.user.profile
-        follows = False
-
-        if profile_to_follow in current_user.follows.all():
-            current_user.follows.remove(profile_to_follow)
-            follows = False
-            Notification.objects.filter(sender=request.user.profile, receiver=profile_to_follow, notification_type='follow').delete()
-        else:
-            current_user.follows.add(profile_to_follow)
-            follows = True
-            Notification.objects.create(
-                sender=request.user.profile,
-                receiver= profile_to_follow,
-                notification_type='follow',
-            )
-        
-        followers_count = profile_to_follow.followers_count()
-
-        return JsonResponse({'follows': follows, 'followers_count': followers_count})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def notifications_page(request):
     notifications = Notification.objects.filter(receiver=request.user.profile).order_by('-created_on')
@@ -533,19 +437,3 @@ def notifications_page(request):
     }
 
     return render(request, 'home/notifications.html', context)
-
-# class SignUpView(generic.CreateView):
-#     form_class = UserCreationForm
-#     success_url = reverse_lazy("login")
-#     template_name = "registration/signup.html"
-
-#     def form_valid(self, form):
-#         messages.success(self.request, 'Account created successfully!')
-#         return super().form_valid(form)
-
-    # def form_valid(self, form):
-    #     # Save the user instance
-    #     response = super().form_valid(form)
-    #     # Create a profile for the user
-    #     Profile.objects.create(user=self.object)
-    #     return response

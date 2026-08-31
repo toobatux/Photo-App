@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { customFetch } from '../services/api';
 import { Link } from 'react-router';
-import SignupForm from '../components/SignupForm';
+import SignupForm from '../features/auth/components/SignupForm';
 
 function Signup() {
   const [username, setUsername] = useState('');

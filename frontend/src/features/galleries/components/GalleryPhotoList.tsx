@@ -1,9 +1,9 @@
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import PhotoLibraryOutlinedIcon from "@mui/icons-material/PhotoLibraryOutlined";
 import { useEffect, useRef } from "react";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { Link } from "react-router";
-import useModal from "../hooks/useModal";
+import useModal from "../../../hooks/useModal";
 
 const GalleryPhotoList = ({
   photos,

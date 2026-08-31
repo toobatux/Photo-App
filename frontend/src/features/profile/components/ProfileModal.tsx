@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Dropdown from "./Dropdown";
+import Dropdown from "../../../components/Dropdown";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";

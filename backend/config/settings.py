@@ -15,9 +15,10 @@ from dotenv import load_dotenv
 import dj_database_url
 from datetime import timedelta
 
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
@@ -25,10 +26,6 @@ load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True 
-os.getenv('DEBUG', 'True') == True
 
 ALLOWED_HOSTS = [
     '*'
@@ -89,8 +86,20 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
   ],
   'DEFAULT_PERMISSION_CLASSES': [
-    'rest_framework.permissions.IsAuthenticated',
-  ]
+        'rest_framework.permissions.IsAuthenticated',
+  ],
+  'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.ScopedRateThrottle',
+  ],
+  'DEFAULT_THROTTLE_RATES': {
+        'anon': '50/minute',         # For unauthenticated users
+        'user': '100/minute',        # For authenticated users
+        'sensitive_action': '5/min', # Custom scope rate
+        'like_save': '20/min',
+        'current_user': '50/min'
+  },
 }
 
 SIMPLE_JWT = {
@@ -101,13 +110,18 @@ SIMPLE_JWT = {
 
 # Allows the browser to send cookies (session ID & CSRF token)
 CORS_ALLOW_CREDENTIALS = True
-
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
-# Ensure Django sends the CSRF token via a cookie that React can read
-CSRF_COOKIE_HTTPONLY = False  # Set to False so React can read it via JS
-SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_PATH = '/'
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_PARTITIONED = True
+
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True 
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_PARTITIONED = True
 
 ROOT_URLCONF = 'config.urls'
 
@@ -129,8 +143,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -142,6 +154,13 @@ DATABASES = {
     )
 }
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = "index"
+LOGOUT_REDIRECT_URL = "index"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -161,72 +180,52 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'static'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+if DEBUG:
+    # Local development
+    MEDIA_URL = '/media/'
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    }
+else:
+    # Production: AWS S3 Settings
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
 
-LOGIN_REDIRECT_URL = "index"
-LOGOUT_REDIRECT_URL = "index"
+    # S3 Options
+    AWS_S3_FILE_OVERWRITE = False  # Appends random hash if file names conflict
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False
 
-# Define the base directory for media uploads
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'
 
-# Define the directory where uploaded files will be saved
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Define the URL prefix for media files
-# MEDIA_URL = '/media/'
-
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_PARTITIONED = True
-
-SESSION_COOKIE_SECURE = True 
-SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_PARTITIONED = True
-
-# AWS S3 Settings
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
-
-# AWS S3 Options
-AWS_S3_FILE_OVERWRITE = False  # Appends random hash if file names conflict
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = True
-
-STORAGES = {
-  'default': {
-    'BACKEND': 'storages.backends.s3.S3Storage',
-  },
-  'staticfiles': {
-    'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
-  },
-}
-
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'
+    STORAGES = {
+        'default': {
+            'BACKEND': 'storages.backends.s3.S3Storage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    }

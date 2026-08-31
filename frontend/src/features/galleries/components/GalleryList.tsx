@@ -1,10 +1,11 @@
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import PhotoLibraryOutlinedIcon from "@mui/icons-material/PhotoLibraryOutlined";
+import ImageNotSupportedOutlinedIcon from '@mui/icons-material/ImageNotSupportedOutlined';
 import { useEffect, useRef } from "react";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { Link } from "react-router";
-import useModal from "../hooks/useModal";
-import NewGalleryModal from "../components/NewGalleryModal";
+import useModal from "../../../hooks/useModal";
+import NewGalleryModal from "./NewGalleryModal";
 import NewGalleryButton from "./NewGalleryButton";
 
 const GalleryList = ({
@@ -18,8 +19,6 @@ const GalleryList = ({
 }) => {
   const observerTarget = useRef(null);
   const newModal = useModal();
-
-  console.log(galleries);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -49,11 +48,19 @@ const GalleryList = ({
             <Link to={`/galleries/${gallery.id}`} key={gallery.id}>
               <div className="flex w-full h-full flex-col gap-2 cursor-pointer hover:bg-foreground/5 transition-colors p-4 rounded">
                 <div className="relative">
-                  <img
-                    src={gallery.photos?.[0]?.src}
-                    alt=""
-                    className="flex w-full h-full aspect-square rounded bg-foreground/10 shadow-lg cursor-pointer transition-all object-cover object-center"
-                  />
+                  {gallery.photos?.[0]?.src ? (
+                    <img
+                      src={gallery.photos?.[0]?.src}
+                      alt=""
+                      className="flex w-full h-full aspect-square rounded bg-foreground/10 shadow-lg cursor-pointer transition-all object-cover object-center"
+                    />
+                  ) : (
+                    <div className="relative flex w-full h-full aspect-square rounded bg-foreground/10 shadow-lg cursor-pointer transition-all object-cover object-center">
+                        <div className="absolute right-1/2 translate-x-1/2 top-1/2 -translate-y-1/2">
+                        <ImageNotSupportedOutlinedIcon className="text-foreground/20" sx={{fontSize:"32px"}}/>
+                        </div>
+                    </div>
+                  )}
                   <div className="absolute bottom-2 right-2 px-2 py-1 text-sm rounded text-foreground bg-background/20 backdrop-blur">
                     <div className="flex gap-2">
                       <PhotoLibraryOutlinedIcon
@@ -88,6 +95,7 @@ const GalleryList = ({
                       </Link>
                     </div>
                   </div> */}
+
                 <p className="flex">{gallery.title}</p>
 
                 {!gallery.is_public && (
@@ -109,9 +117,7 @@ const GalleryList = ({
       {isEmpty && (
         <div className="flex flex-col gap-4 m-auto mt-20 text-secondary text-center">
           <p>No galleries yet</p>
-          {isOwner && (
-            <NewGalleryButton/>
-          )}
+          {isOwner && <NewGalleryButton />}
         </div>
       )}
 
